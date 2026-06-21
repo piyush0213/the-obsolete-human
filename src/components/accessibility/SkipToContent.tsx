@@ -9,7 +9,11 @@
  *
  * WCAG 2.4.1 (Bypass Blocks) — Level A
  */
-export function SkipToContent() {
+/**
+ * @description Component SkipToContent
+ * @returns {JSX.Element}
+ */
+export function SkipToContent(): JSX.Element {
   return (
     <a
       href="#main-content"

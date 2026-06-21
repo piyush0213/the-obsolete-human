@@ -6,11 +6,15 @@ interface SkeletonProps {
   variant?: "text" | "card" | "circle" | "rect";
 }
 
+/**
+ * @description Component Skeleton
+ * @returns {JSX.Element}
+ */
 export function Skeleton({
   className,
   lines = 1,
   variant = "text",
-}: SkeletonProps) {
+}: SkeletonProps): JSX.Element {
   const baseClasses =
     "motion-safe:animate-pulse bg-museum-bg-elevated rounded";
 

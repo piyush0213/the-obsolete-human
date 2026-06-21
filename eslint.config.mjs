@@ -12,7 +12,7 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   {
-    ignores: [".next/**", "node_modules/**", "coverage/**", "e2e/**"],
+    ignores: [".next/**", "node_modules/**", "coverage/**", "e2e/**", "fixer.js", "fixer2.js", "fixer3.js", "next.config.js"],
   },
   ...compat.extends(
     "next/core-web-vitals",
@@ -26,6 +26,8 @@ const eslintConfig = [
       "@typescript-eslint/no-explicit-any": "error",
       "jsx-a11y/alt-text": "error",
       "security/detect-object-injection": "off",
+      "@typescript-eslint/explicit-function-return-type": "error",
+      "@typescript-eslint/explicit-module-boundary-types": "error"
     },
   },
 ];

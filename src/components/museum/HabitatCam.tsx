@@ -27,7 +27,11 @@ interface HabitatCamProps {
  * - Upload button has aria-describedby for format instructions
  * - Environmental data grouped with role="group"
  */
-export function HabitatCam({ habitat, className }: HabitatCamProps) {
+/**
+ * @description Component HabitatCam
+ * @returns {JSX.Element}
+ */
+export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
   const [preview, setPreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -49,12 +53,12 @@ export function HabitatCam({ habitat, className }: HabitatCamProps) {
     announce("Uploading habitat photograph...");
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = (e): void => {
       setPreview(e.target?.result as string);
       setUploadState("done");
       announce(`Habitat photograph uploaded for ${habitat.name}. Preview now available.`);
     };
-    reader.onerror = () => {
+    reader.onerror = (): void => {
       setUploadState("idle");
       announce("Upload failed. Please try again.");
     };

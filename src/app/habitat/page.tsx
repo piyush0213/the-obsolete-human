@@ -9,7 +9,11 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type AnalysisState = "idle" | "uploading" | "analyzing" | "done" | "error";
 
-export default function HabitatPage() {
+/**
+ * @description Component HabitatPage
+ * @returns {JSX.Element}
+ */
+export default function HabitatPage(): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
   const [preview, setPreview] = useState<string | null>(null);
   const [analysisState, setAnalysisState] = useState<AnalysisState>("idle");
@@ -37,12 +41,12 @@ export default function HabitatPage() {
       announce("Uploading habitat photograph...");
 
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = (e): void => {
         setPreview(e.target?.result as string);
         setAnalysisState("idle");
         announce("Habitat photograph uploaded. Ready for analysis.");
       };
-      reader.onerror = () => {
+      reader.onerror = (): void => {
         setAnalysisState("error");
         setErrorMessage("Upload failed. Please try again.");
         announce("Upload failed. Please try again.");
@@ -137,7 +141,7 @@ export default function HabitatPage() {
     }
   }, []);
 
-  const removePreview = useCallback(() => {
+  const removePreview = useCallback((): void => {
     setPreview(null);
     setNarration(null);
     setFieldNote(null);

@@ -29,11 +29,15 @@ export const viewport: Viewport = {
   themeColor: "#1a1814",
 };
 
+/**
+ * @description Component RootLayout
+ * @returns {JSX.Element}
+ */
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}): JSX.Element {
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen bg-museum-bg text-museum-text antialiased">

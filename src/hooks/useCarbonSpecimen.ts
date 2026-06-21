@@ -4,12 +4,13 @@ import { useState, useCallback, useEffect } from "react";
 import type { Specimen, CarbonFootprint, HabitsInput, OnboardingSpecimen, ConservationStatusLevel, EmissionsKg } from "@/types";
 import { toEmissionsKg, toSpecimenId } from "@/types";
 import { kgCO2ToTrees } from "@/lib/utils";
-import { calculateAnnualEmissions, calculateLifestyleExpiry, getConservationStatus } from "@/lib/extinction";
+import { calculateCarbonEmissions, calculateLifestyleExpiry, getConservationStatus } from "@/lib/extinction";
 
 // ─── Carbon Translation ────────────────────────────────────
 
 interface CarbonTranslation {
   trees: number;
+  arcticIce: number;
   flightsNYtoLondon: number;
   smartphoneCharges: number;
   beefBurgers: number;
@@ -19,6 +20,7 @@ interface CarbonTranslation {
 function translateCarbon(kgCO2: number): CarbonTranslation {
   return {
     trees: kgCO2ToTrees(kgCO2),
+    arcticIce: Math.round(kgCO2 * 0.003 * 100) / 100, // Roughly 3m2 per tonne (1000kg)
     flightsNYtoLondon: Math.round((kgCO2 / 986) * 100) / 100,
     smartphoneCharges: Math.round(kgCO2 / 0.008),
     beefBurgers: Math.round(kgCO2 / 3.6),
@@ -89,18 +91,22 @@ function generateSpeciesName(habits: HabitsInput): string {
 // ─── Hook: useOnboardingSpecimen ───────────────────────────
 // Creates and persists an OnboardingSpecimen from form data.
 
-export function useOnboardingSpecimen() {
+/**
+ * @description Custom hook useOnboardingSpecimen
+ * @returns {any}
+ */
+export function useOnboardingSpecimen(): { specimen: OnboardingSpecimen | null; isLoading: boolean; createSpecimen: (habits: HabitsInput) => OnboardingSpecimen; clearSpecimen: () => void } {
   const [specimen, setSpecimen] = useState<OnboardingSpecimen | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Hydrate from localStorage after mount (prevents mismatch)
-  useEffect(() => {
+  useEffect((): void | (() => void) => {
     setSpecimen(loadSpecimen());
     setIsLoading(false);
   }, []);
 
   const createSpecimen = useCallback((habits: HabitsInput) => {
-    const emissions = calculateAnnualEmissions(habits);
+    const emissions = calculateCarbonEmissions(habits);
     const expiry = calculateLifestyleExpiry(emissions);
     const status: ConservationStatusLevel = getConservationStatus(emissions);
     const speciesName = generateSpeciesName(habits);
@@ -142,7 +148,11 @@ export function useOnboardingSpecimen() {
 // ─── Hook: useCarbonSpecimen (legacy gallery) ──────────────
 // Used by existing gallery components for carbon translation.
 
-export function useCarbonSpecimen(specimen: Specimen | null) {
+/**
+ * @description Custom hook useCarbonSpecimen
+ * @returns {any}
+ */
+export function useCarbonSpecimen(specimen: Specimen | null): { carbonData: CarbonFootprint | null; translation: CarbonTranslation | null; selectedUnit: keyof CarbonTranslation; setSelectedUnit: React.Dispatch<React.SetStateAction<keyof CarbonTranslation>>; formattedValue: () => string } {
   const [selectedUnit, setSelectedUnit] = useState<keyof CarbonTranslation>("trees");
 
   const carbonData: CarbonFootprint | null = specimen?.carbonFootprint ?? null;
@@ -155,15 +165,17 @@ export function useCarbonSpecimen(specimen: Specimen | null) {
     const value = translation[selectedUnit];
     switch (selectedUnit) {
       case "trees":
-        return `${value.toLocaleString()} trees needed annually to offset`;
+        return `requiring ${value.toLocaleString()} trees to absorb the CO₂ for 1 year`;
+      case "arcticIce":
+        return `melting ${value.toLocaleString()} m² of Arctic ice annually from CO₂ emissions`;
       case "flightsNYtoLondon":
-        return `${value} round-trip flights from New York to London`;
+        return `${value.toLocaleString()} round-trip flights from New York to London (Carbon Equivalent)`;
       case "smartphoneCharges":
-        return `${value.toLocaleString()} full smartphone charges`;
+        return `${value.toLocaleString()} full smartphone charges (Carbon Equivalent)`;
       case "beefBurgers":
-        return `${value.toLocaleString()} beef burgers produced`;
+        return `${value.toLocaleString()} beef burgers produced (Carbon Equivalent)`;
       case "streamingHours":
-        return `${value.toLocaleString()} hours of video streaming`;
+        return `${value.toLocaleString()} hours of video streaming (Carbon Equivalent)`;
       default:
         return "Unknown unit";
     }

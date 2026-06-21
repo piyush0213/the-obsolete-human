@@ -52,8 +52,11 @@ const PLAQUES: TaxidermyPlaqueType[] = [
 
 /** Exhibit halls for filtering */
 const HALLS = Array.from(new Set(PLAQUES.map((p) => p.exhibitHall)));
-
-export default function TaxidermyPage() {
+/**
+ * @description Displays a searchable grid of saved behavioral specimens.
+ * @returns {JSX.Element} The taxidermy archive interface.
+ */
+export default function TaxidermyPage(): JSX.Element {
   const [selectedPlaque, setSelectedPlaque] =
     useState<TaxidermyPlaqueType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");

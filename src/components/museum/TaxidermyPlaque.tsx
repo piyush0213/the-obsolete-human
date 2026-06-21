@@ -15,7 +15,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 /** Decorative brass corner accents */
-function CornerAccents() {
+function CornerAccents(): JSX.Element {
   return (
     <>
       <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-museum-accent/40 rounded-tl-xl" aria-hidden="true" />
@@ -26,7 +26,7 @@ function CornerAccents() {
   );
 }
 
-function Divider({ width = "w-12" }: { width?: string }) {
+function Divider({ width = "w-12" }: { width?: string }): JSX.Element {
   return (
     <div className="flex items-center justify-center gap-3" aria-hidden="true">
       <div className={cn("h-px bg-museum-accent/30", width)} />
@@ -43,7 +43,11 @@ function Divider({ width = "w-12" }: { width?: string }) {
  * Each plaque: role="listitem", aria-label with full description,
  * <dl> for metadata, hover/focus reveals full plaque text.
  */
-export function TaxidermyPlaque({ plaque, item, className }: TaxidermyPlaqueProps) {
+/**
+ * @description Component TaxidermyPlaque
+ * @returns {JSX.Element}
+ */
+export function TaxidermyPlaque({ plaque, item, className }: TaxidermyPlaqueProps): JSX.Element | null {
   const cardClasses = cn(
     "group relative overflow-hidden border-museum-accent/20 transition-all",
     "hover:border-museum-accent/50 focus-within:border-museum-accent/50",

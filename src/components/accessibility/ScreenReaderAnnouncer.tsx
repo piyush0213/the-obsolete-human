@@ -12,12 +12,16 @@ import { useEffect, useRef, useState } from "react";
  * Other components trigger announcements via the `announce()` helper
  * which dispatches a custom `museum:announce` event on `window`.
  */
-export function ScreenReaderAnnouncer() {
+/**
+ * @description Component ScreenReaderAnnouncer
+ * @returns {JSX.Element}
+ */
+export function ScreenReaderAnnouncer(): JSX.Element {
   const [message, setMessage] = useState("");
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    function handleAnnounce(event: CustomEvent<string>) {
+  useEffect((): void | (() => void) => {
+    function handleAnnounce(event: CustomEvent<string>): void {
       // Clear → re-set forces screen readers to re-read even
       // if the new message is identical to the previous one.
       setMessage("");

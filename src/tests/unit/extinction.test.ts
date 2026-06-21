@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import type { HabitsInput } from "@/types";
 import {
-  calculateAnnualEmissions,
+  calculateCarbonEmissions,
   calculateLifestyleExpiry,
   translateToTreeHours,
   getConservationStatus,
@@ -74,10 +74,10 @@ describe("calculateLifestyleExpiry", () => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-// calculateAnnualEmissions
+// calculateCarbonEmissions
 // ═══════════════════════════════════════════════════════════════
 
-describe("calculateAnnualEmissions", () => {
+describe("calculateCarbonEmissions", () => {
   const baseHabits: HabitsInput = {
     name: "Test Subject",
     diet: "omnivore",
@@ -91,13 +91,13 @@ describe("calculateAnnualEmissions", () => {
   };
 
   it("should return a positive number for typical habits", () => {
-    const emissions = calculateAnnualEmissions(baseHabits);
+    const emissions = calculateCarbonEmissions(baseHabits);
     expect(emissions).toBeGreaterThan(0);
   });
 
   it("should return higher emissions for carnivore diet", () => {
-    const omnivore = calculateAnnualEmissions(baseHabits);
-    const carnivore = calculateAnnualEmissions({
+    const omnivore = calculateCarbonEmissions(baseHabits);
+    const carnivore = calculateCarbonEmissions({
       ...baseHabits,
       diet: "carnivore",
     });
@@ -105,8 +105,8 @@ describe("calculateAnnualEmissions", () => {
   });
 
   it("should return higher emissions for private transport with more km", () => {
-    const publicTransport = calculateAnnualEmissions(baseHabits);
-    const privateHeavy = calculateAnnualEmissions({
+    const publicTransport = calculateCarbonEmissions(baseHabits);
+    const privateHeavy = calculateCarbonEmissions({
       ...baseHabits,
       transport: "private",
       weeklyKm: 300,
@@ -115,8 +115,8 @@ describe("calculateAnnualEmissions", () => {
   });
 
   it("should return lower emissions for renewable energy", () => {
-    const mixed = calculateAnnualEmissions(baseHabits);
-    const renewable = calculateAnnualEmissions({
+    const mixed = calculateCarbonEmissions(baseHabits);
+    const renewable = calculateCarbonEmissions({
       ...baseHabits,
       energySource: "renewable",
     });
@@ -124,8 +124,8 @@ describe("calculateAnnualEmissions", () => {
   });
 
   it("should return lower emissions for shared housing", () => {
-    const apartment = calculateAnnualEmissions(baseHabits);
-    const shared = calculateAnnualEmissions({
+    const apartment = calculateCarbonEmissions(baseHabits);
+    const shared = calculateCarbonEmissions({
       ...baseHabits,
       housingType: "shared",
     });
@@ -133,8 +133,8 @@ describe("calculateAnnualEmissions", () => {
   });
 
   it("should increase with more deliveries", () => {
-    const few = calculateAnnualEmissions(baseHabits);
-    const many = calculateAnnualEmissions({
+    const few = calculateCarbonEmissions(baseHabits);
+    const many = calculateCarbonEmissions({
       ...baseHabits,
       deliveriesPerWeek: 20,
     });
@@ -142,12 +142,12 @@ describe("calculateAnnualEmissions", () => {
   });
 
   it("should return zero transport contribution for zero km", () => {
-    const zeroKm = calculateAnnualEmissions({
+    const zeroKm = calculateCarbonEmissions({
       ...baseHabits,
       weeklyKm: 0,
       transport: "private",
     });
-    const someKm = calculateAnnualEmissions({
+    const someKm = calculateCarbonEmissions({
       ...baseHabits,
       weeklyKm: 100,
       transport: "private",
@@ -156,8 +156,8 @@ describe("calculateAnnualEmissions", () => {
   });
 
   it("should add AC usage to total", () => {
-    const noAc = calculateAnnualEmissions(baseHabits);
-    const constantAc = calculateAnnualEmissions({
+    const noAc = calculateCarbonEmissions(baseHabits);
+    const constantAc = calculateCarbonEmissions({
       ...baseHabits,
       acUsage: "constant",
     });

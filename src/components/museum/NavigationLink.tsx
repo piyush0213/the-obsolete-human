@@ -16,7 +16,11 @@ interface NavigationLinkProps {
  * Highlights the active route and sets the proper ARIA attribute
  * so screen readers announce the currently active page.
  */
-export function NavigationLink({ href, label, ariaLabel }: NavigationLinkProps) {
+/**
+ * @description Component NavigationLink
+ * @returns {JSX.Element}
+ */
+export function NavigationLink({ href, label, ariaLabel }: NavigationLinkProps): JSX.Element {
   const pathname = usePathname();
   const isActive =
     href === "/" ? pathname === "/" : pathname.startsWith(href);

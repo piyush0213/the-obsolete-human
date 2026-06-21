@@ -60,13 +60,17 @@ function generateDailyNote(specimenId: string): FieldNoteEntry {
 
 // ─── Hook: useFieldNotes (new, localStorage-based) ─────────
 
-export function usePersistedFieldNotes(specimenId: string) {
+/**
+ * @description Custom hook usePersistedFieldNotes
+ * @returns {any}
+ */
+export function usePersistedFieldNotes(specimenId: string): { notes: FieldNoteEntry[]; isLoading: boolean; addNote: (content: string, severity?: FieldNoteEntry["severity"]) => boolean; removeNote: (noteId: string) => void } {
   const [notes, setNotes] = useState<FieldNoteEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const hasHydrated = useRef(false);
 
   // Hydrate from localStorage + inject daily note
-  useEffect(() => {
+  useEffect((): void | (() => void) => {
     if (hasHydrated.current) return;
     hasHydrated.current = true;
 
@@ -124,7 +128,11 @@ export function usePersistedFieldNotes(specimenId: string) {
 // ─── Hook: useFieldNotes (legacy, in-memory) ───────────────
 // Used by existing gallery FieldNotes component.
 
-export function useFieldNotes(initialNotes: FieldNote[] = []) {
+/**
+ * @description Custom hook useFieldNotes
+ * @returns {any}
+ */
+export function useFieldNotes(initialNotes: FieldNote[] = []): { notes: FieldNote[]; isSubmitting: boolean; error: string | null; addNote: (specimenId: string, content: string, classification: FieldNote["classification"]) => boolean; removeNote: (noteId: string) => void; clearError: () => void; setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>> } {
   const [notes, setNotes] = useState<FieldNote[]>(initialNotes);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

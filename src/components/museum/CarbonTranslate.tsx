@@ -12,11 +12,12 @@ interface CarbonTranslateProps {
 }
 
 const UNIT_OPTIONS = [
-  { value: "trees", label: "Trees to Offset" },
-  { value: "flightsNYtoLondon", label: "NY↔London Flights" },
-  { value: "smartphoneCharges", label: "Phone Charges" },
-  { value: "beefBurgers", label: "Beef Burgers" },
-  { value: "streamingHours", label: "Streaming Hours" },
+  { value: "trees", label: "Trees to Absorb CO₂" },
+  { value: "arcticIce", label: "Arctic Ice Melted by CO₂" },
+  { value: "flightsNYtoLondon", label: "NY↔London Flights (Carbon Equivalent)" },
+  { value: "smartphoneCharges", label: "Phone Charges (Carbon Equivalent)" },
+  { value: "beefBurgers", label: "Beef Burgers (Carbon Equivalent)" },
+  { value: "streamingHours", label: "Streaming Hours (Carbon Equivalent)" },
 ] as const;
 
 /**
@@ -28,7 +29,11 @@ const UNIT_OPTIONS = [
  * - Equivalent value announced via aria-live="polite"
  * - Trend badge has both colour and text label
  */
-export function CarbonTranslate({ specimen, className }: CarbonTranslateProps) {
+/**
+ * @description Component CarbonTranslate
+ * @returns {JSX.Element}
+ */
+export function CarbonTranslate({ specimen, className }: CarbonTranslateProps): JSX.Element | null {
   const { carbonData, translation, selectedUnit, setSelectedUnit, formattedValue } =
     useCarbonSpecimen(specimen);
 

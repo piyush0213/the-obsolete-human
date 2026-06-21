@@ -33,12 +33,16 @@ const STATUS_ICONS: Record<ConservationStatusType, string> = {
   LEAST_CONCERN: "●",
 };
 
+/**
+ * @description Component ConservationStatus
+ * @returns {JSX.Element}
+ */
 export function ConservationStatus({
   status,
   size = "md",
   showLabel = true,
   className,
-}: ConservationStatusProps) {
+}: ConservationStatusProps): JSX.Element {
   const config = CONSERVATION_STATUS_CONFIG[status];
   const icon = STATUS_ICONS[status];
 

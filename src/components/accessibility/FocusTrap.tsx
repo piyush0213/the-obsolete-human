@@ -34,19 +34,23 @@ const FOCUSABLE_SELECTORS = [
  * Used by Dialog, ConfirmModal, and any overlay that must meet
  * WCAG 2.4.3 (Focus Order) and 2.1.2 (No Keyboard Trap).
  */
-export function FocusTrap({ children, active, onEscape }: FocusTrapProps) {
+/**
+ * @description Component FocusTrap
+ * @returns {JSX.Element}
+ */
+export function FocusTrap({ children, active, onEscape }: FocusTrapProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<Element | null>(null);
 
   // Remember the element that had focus before the trap opened
-  useEffect(() => {
+  useEffect((): void | (() => void) => {
     if (active) {
       triggerRef.current = document.activeElement;
     }
   }, [active]);
 
   // Restore focus when the trap deactivates or unmounts
-  useEffect(() => {
+  useEffect((): void | (() => void) => {
     return () => {
       if (triggerRef.current instanceof HTMLElement) {
         triggerRef.current.focus();
@@ -55,7 +59,7 @@ export function FocusTrap({ children, active, onEscape }: FocusTrapProps) {
   }, []);
 
   // Focus first element & set up Tab-wrapping + Escape handling
-  useEffect(() => {
+  useEffect((): void | (() => void) => {
     if (!active) return;
 
     const container = containerRef.current;
@@ -75,7 +79,7 @@ export function FocusTrap({ children, active, onEscape }: FocusTrapProps) {
       }
     });
 
-    function handleKeyDown(event: KeyboardEvent) {
+    function handleKeyDown(event: KeyboardEvent): void {
       // ─ Escape ─
       if (event.key === "Escape" && onEscape) {
         event.stopPropagation();

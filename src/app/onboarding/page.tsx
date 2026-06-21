@@ -10,15 +10,55 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import type { HabitsInput } from "@/types";
+import { calculateCarbonEmissions } from "@/lib/extinction";
+import { formatNumber } from "@/lib/utils";
+
+function LiveTally({ emissions }: { emissions: number | null }): JSX.Element | null {
+  if (emissions === null) return null;
+  const target = 1500;
+  const pct = Math.min((emissions / target) * 100, 100);
+  return (
+    <div className="bg-museum-accent/10 border border-museum-accent/30 p-4 rounded-lg mt-6 text-center shadow-inner" aria-live="polite">
+      <p className="font-mono text-sm text-museum-text">Estimated emissions: <span className="text-museum-accent text-lg">{formatNumber(emissions)}</span> kg CO₂/year</p>
+      <div className="w-full bg-museum-bg-dark h-2 mt-3 rounded-full overflow-hidden flex" aria-hidden="true">
+        <div className="bg-museum-secondary h-full transition-all duration-300" style={{ width: `${pct}%` }} />
+      </div>
+      <p className="text-[10px] text-museum-text-muted mt-2 uppercase tracking-wider">
+        Distance from 1.5 ton (1,500 kg) sustainable target
+      </p>
+    </div>
+  );
+}
 
 type FormErrors = Partial<Record<keyof HabitsInput, string>>;
-
-export default function OnboardingPage() {
+/**
+ * @description The multi-step classification form where users input their habits.
+ * @returns {JSX.Element} The interactive onboarding form.
+ */
+export default function OnboardingPage(): JSX.Element {
   const router = useRouter();
   const { createSpecimen } = useOnboardingSpecimen();
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [liveEmissions, setLiveEmissions] = useState<number | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const handleFormChange = useCallback(() => {
+    if (!formRef.current) return;
+    const formData = new FormData(formRef.current);
+    const raw = {
+      name: (formData.get("name") as string) || "Unknown",
+      diet: (formData.get("diet") as string) || "omnivore",
+      transport: (formData.get("transport") as string) || "mixed",
+      weeklyKm: Number(formData.get("weeklyKm")) || 0,
+      energySource: (formData.get("energySource") as string) || "mixed",
+      housingType: (formData.get("housingType") as string) || "apartment",
+      acUsage: (formData.get("acUsage") as string) || "none",
+      deliveriesPerWeek: Number(formData.get("deliveriesPerWeek")) || 0,
+      electronicsReplacement: (formData.get("electronicsReplacement") as string) || "yearly",
+    } as HabitsInput;
+    setLiveEmissions(calculateCarbonEmissions(raw));
+  }, []);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -108,6 +148,7 @@ export default function OnboardingPage() {
           <form
             ref={formRef}
             onSubmit={handleSubmit}
+            onChange={handleFormChange}
             noValidate
             className="space-y-10"
           >
@@ -141,6 +182,7 @@ export default function OnboardingPage() {
                   { value: "nomadic", label: "Nomadic — No fixed shelter" },
                 ]}
                 error={errors.housingType}
+                helperText="Larger territorial dwellings (houses) require more carbon-intensive temperature control than multi-unit structures."
               />
 
               <Select
@@ -154,6 +196,7 @@ export default function OnboardingPage() {
                   { value: "unknown", label: "Unknown — Unaware of source" },
                 ]}
                 error={errors.energySource}
+                helperText="Fossil combustion adds heavy carbon burdens compared to renewable grids."
               />
 
               <Select
@@ -167,7 +210,9 @@ export default function OnboardingPage() {
                   { value: "constant", label: "Constant — Permanent climate control" },
                 ]}
                 error={errors.acUsage}
+                helperText="Permanent climate control significantly increases a specimen's energy footprint."
               />
+              <LiveTally emissions={liveEmissions} />
             </fieldset>
 
             {/* ══ Section 2: Dietary Class ══ */}
@@ -190,6 +235,7 @@ export default function OnboardingPage() {
                   { value: "opportunistic", label: "Opportunistic — Whatever is available" },
                 ]}
                 error={errors.diet}
+                helperText="Animal-protein dominant diets have a significantly higher carbon footprint due to agricultural emissions."
               />
 
               <Input
@@ -201,8 +247,9 @@ export default function OnboardingPage() {
                 max={50}
                 defaultValue={0}
                 error={errors.deliveriesPerWeek}
-                helperText="How many food/goods deliveries arrive at your nest weekly?"
+                helperText="How many food/goods deliveries arrive at your nest weekly? High carbon cost for final-mile logistics."
               />
+              <LiveTally emissions={liveEmissions} />
             </fieldset>
 
             {/* ══ Section 3: Migration Patterns ══ */}
@@ -226,6 +273,7 @@ export default function OnboardingPage() {
                   { value: "aviation_heavy", label: "Aviation Heavy — Frequent flyer" },
                 ]}
                 error={errors.transport}
+                helperText="Personal combustion vehicles and aviation are among the largest individual carbon contributors."
               />
 
               <Input
@@ -237,8 +285,9 @@ export default function OnboardingPage() {
                 max={5000}
                 defaultValue={0}
                 error={errors.weeklyKm}
-                helperText="Total kilometers traveled per week by your primary transport mode"
+                helperText="Total kilometers traveled per week by your primary transport mode, driving major CO₂ emissions."
               />
+              <LiveTally emissions={liveEmissions} />
             </fieldset>
 
             {/* ══ Section 4: Display Behavior ══ */}
@@ -261,7 +310,9 @@ export default function OnboardingPage() {
                   { value: "obsessively", label: "Obsessively — Every release event" },
                 ]}
                 error={errors.electronicsReplacement}
+                helperText="Manufacturing synthetic polymers and rare-earth components for electronics has a massive hidden carbon cost."
               />
+              <LiveTally emissions={liveEmissions} />
             </fieldset>
 
             {/* ══ Submit ══ */}

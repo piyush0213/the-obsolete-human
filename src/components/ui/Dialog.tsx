@@ -13,6 +13,10 @@ interface DialogProps {
   className?: string;
 }
 
+/**
+ * @description Component Dialog
+ * @returns {JSX.Element}
+ */
 export function Dialog({
   open,
   onClose,
@@ -20,10 +24,10 @@ export function Dialog({
   title,
   description,
   className,
-}: DialogProps) {
+}: DialogProps): JSX.Element | null {
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useEffect((): void | (() => void) => {
     if (open) {
       document.body.style.overflow = "hidden";
     } else {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 import { getSystemPrompt } from "@/lib/prompts";
 import type { PromptType } from "@/lib/prompts";
 
@@ -281,8 +282,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   } catch (err) {
     // NEVER leak internal details or the API key
-    // eslint-disable-next-line no-console
-    console.error("[curate] Internal error:", err);
+    // In production, this would use a structured logger (e.g. Sentry)
+    logger.error("[curate] Internal error:", err);
 
     return NextResponse.json(
       {

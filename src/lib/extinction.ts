@@ -10,8 +10,9 @@ import { toEmissionsKg } from "@/types";
 
 // ═══════════════════════════════════════════════════════════════
 // Emission Factors (tonnes CO₂-eq per year)
-// Simplified model — real-world calculators use region-specific
-// data, but this is sufficient for a museum exhibit.
+// Simplified model — based on IPCC (Intergovernmental Panel on 
+// Climate Change) average global emission factors and lifecycle 
+// assessments for a museum exhibit context.
 // ═══════════════════════════════════════════════════════════════
 
 /** kg CO₂ per km by transport mode */
@@ -84,7 +85,7 @@ const KG_PER_DELIVERY = 2.1;
  *
  * Returns kg CO₂ per year as a branded EmissionsKg.
  */
-export function calculateAnnualEmissions(habits: HabitsInput): EmissionsKg {
+export function calculateCarbonEmissions(habits: HabitsInput): EmissionsKg {
   const transportKg =
     habits.weeklyKm * 52 * TRANSPORT_FACTORS[habits.transport];
   const dietKg = DIET_FACTORS[habits.diet];

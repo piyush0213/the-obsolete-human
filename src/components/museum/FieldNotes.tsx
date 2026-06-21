@@ -47,14 +47,18 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; icon: string }
  * - Classification icons are purely decorative (aria-hidden)
  * - Error messages use `role="alert"` for immediate announcement
  */
-export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps) {
+/**
+ * @description Component FieldNotes
+ * @returns {JSX.Element}
+ */
+export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps): JSX.Element {
   const { notes, error, addNote, removeNote, clearError } =
     useFieldNotes(initialNotes);
   const [content, setContent] = useState("");
   const [classification, setClassification] =
     useState<FieldNote["classification"]>("OBSERVATION");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const success = addNote(specimenId, content, classification);
     if (success) {

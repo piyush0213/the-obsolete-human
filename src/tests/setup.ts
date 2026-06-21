@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
 // Mock localStorage
-const localStorageMock = (() => {
+const localStorageMock = ((): Record<string, unknown> => {
   let store: Record<string, string> = {};
   return {
     getItem: vi.fn((key: string) => store[key] ?? null),

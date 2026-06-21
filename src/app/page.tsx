@@ -1,7 +1,10 @@
 import Link from "next/link";
 
-
-export default function EntrancePage() {
+/**
+ * @description The main entrance page for the museum, introducing the concept.
+ * @returns {JSX.Element} The rendered hero section and features.
+ */
+export default function EntrancePage(): JSX.Element {
   return (
     <div className="relative">
       {/* ── Hero Section ── */}
@@ -24,7 +27,7 @@ export default function EntrancePage() {
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto space-y-8">
           <div className="space-y-6">
             <p className="font-mono text-xs text-museum-accent uppercase tracking-[0.4em] motion-safe:animate-fade-in">
-              Department of Anthropological Preservation
+              A Carbon Footprint Awareness Platform
             </p>
 
             <h1
@@ -45,7 +48,10 @@ export default function EntrancePage() {
               className="text-lg sm:text-xl text-museum-text-muted max-w-2xl mx-auto leading-relaxed motion-safe:animate-fade-in font-sans"
               style={{ animationDelay: "0.3s" }}
             >
-              A zoological study of the Anthropocene. Curated by AI. Classified by you.
+              Calculate your environmental impact. Classified by AI.
+            </p>
+            <p className="text-md sm:text-lg text-museum-text-muted/80 max-w-xl mx-auto leading-relaxed motion-safe:animate-fade-in font-sans" style={{ animationDelay: "0.4s" }}>
+              This museum calculates your carbon emissions and translates them into a species conservation status.
             </p>
           </div>
 

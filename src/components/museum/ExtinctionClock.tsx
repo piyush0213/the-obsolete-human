@@ -21,13 +21,17 @@ interface ExtinctionClockProps {
  * - Announces major milestones to screen readers
  * - Falls back to behavioral extinction timeline list
  */
-export function ExtinctionClock({ expiryDate, className }: ExtinctionClockProps) {
+/**
+ * @description Component ExtinctionClock
+ * @returns {JSX.Element}
+ */
+export function ExtinctionClock({ expiryDate, className }: ExtinctionClockProps): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
   const currentYear = new Date().getFullYear();
   const [now, setNow] = useState(Date.now());
 
   // Tick every second for the countdown
-  useEffect(() => {
+  useEffect((): void | (() => void) => {
     if (!expiryDate) return;
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);

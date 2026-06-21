@@ -30,11 +30,15 @@ interface SpecimenCardProps {
  * - Keyboard navigable: Enter and Space on button open detail view
  * - Tags rendered as a semantic list
  */
+/**
+ * @description Component SpecimenCard
+ * @returns {JSX.Element}
+ */
 export function SpecimenCard({
   specimen,
   onSelect,
   className,
-}: SpecimenCardProps) {
+}: SpecimenCardProps): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
   const headingId = `specimen-name-${specimen.id}`;
   const descId = `specimen-desc-${specimen.id}`;
