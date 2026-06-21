@@ -1,6 +1,10 @@
-"use client";
+'use client';
+/**
+ * @file FocusTrap.tsx
+ * @description Implements components/accessibility/FocusTrap.tsx for The Obsolete Human Museum.
+ */
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from 'react';
 
 interface FocusTrapProps {
   /** Content rendered inside the trap */
@@ -12,14 +16,14 @@ interface FocusTrapProps {
 }
 
 const FOCUSABLE_SELECTORS = [
-  "a[href]",
-  "button:not([disabled])",
-  "textarea:not([disabled])",
-  "input:not([disabled])",
-  "select:not([disabled])",
+  'a[href]',
+  'button:not([disabled])',
+  'textarea:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
   '[tabindex]:not([tabindex="-1"])',
   '[role="button"]:not([disabled])',
-].join(", ");
+].join(', ');
 
 /**
  * FocusTrap — Constrains keyboard focus to a container.
@@ -38,7 +42,11 @@ const FOCUSABLE_SELECTORS = [
  * @description Component FocusTrap
  * @returns {JSX.Element}
  */
-export function FocusTrap({ children, active, onEscape }: FocusTrapProps): JSX.Element {
+export function FocusTrap({
+  children,
+  active,
+  onEscape,
+}: FocusTrapProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<Element | null>(null);
 
@@ -67,7 +75,7 @@ export function FocusTrap({ children, active, onEscape }: FocusTrapProps): JSX.E
 
     function getFocusableElements(): HTMLElement[] {
       return Array.from(
-        container?.querySelectorAll(FOCUSABLE_SELECTORS) ?? [],
+        container?.querySelectorAll(FOCUSABLE_SELECTORS) ?? []
       ) as HTMLElement[];
     }
 
@@ -81,14 +89,14 @@ export function FocusTrap({ children, active, onEscape }: FocusTrapProps): JSX.E
 
     function handleKeyDown(event: KeyboardEvent): void {
       // ─ Escape ─
-      if (event.key === "Escape" && onEscape) {
+      if (event.key === 'Escape' && onEscape) {
         event.stopPropagation();
         onEscape();
         return;
       }
 
       // ─ Tab wrapping ─
-      if (event.key !== "Tab") return;
+      if (event.key !== 'Tab') return;
 
       const focusable = getFocusableElements();
       if (focusable.length === 0) {
@@ -112,8 +120,8 @@ export function FocusTrap({ children, active, onEscape }: FocusTrapProps): JSX.E
       }
     }
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [active, onEscape]);
 
   return (

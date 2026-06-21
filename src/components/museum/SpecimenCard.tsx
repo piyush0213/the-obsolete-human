@@ -1,6 +1,12 @@
-"use client";
+'use client';
+/**
+ * @file SpecimenCard.tsx
+ * @description Implements components/museum/SpecimenCard.tsx for The Obsolete Human Museum.
+ */
 
-import type { Specimen } from "@/types";
+import React from 'react';
+
+import type { Specimen } from '@/types';
 import {
   Card,
   CardHeader,
@@ -8,11 +14,11 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@/components/ui/Card";
-import { ConservationStatus } from "@/components/museum/ConservationStatus";
-import { cn, truncateText, formatNumber, formatMuseumDate } from "@/lib/utils";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { CARBON_CATEGORIES } from "@/lib/constants";
+} from '@/components/ui/Card';
+import { ConservationStatus } from '@/components/museum/ConservationStatus';
+import { cn, truncateText, formatNumber, formatMuseumDate } from '@/lib/utils';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { CARBON_CATEGORIES } from '@/lib/constants';
 
 interface SpecimenCardProps {
   specimen: Specimen;
@@ -34,7 +40,7 @@ interface SpecimenCardProps {
  * @description Component SpecimenCard
  * @returns {JSX.Element}
  */
-export function SpecimenCard({
+function SpecimenCardComponent({
   specimen,
   onSelect,
   className,
@@ -46,15 +52,13 @@ export function SpecimenCard({
   return (
     <div
       className={cn(
-        "group",
-        !prefersReducedMotion && "hover:-translate-y-1 transition-transform duration-300",
-        className,
+        'group',
+        !prefersReducedMotion &&
+          'hover:-translate-y-1 transition-transform duration-300',
+        className
       )}
     >
-      <Card
-        className="h-full flex flex-col"
-        aria-labelledby={headingId}
-      >
+      <Card className="h-full flex flex-col" aria-labelledby={headingId}>
         <CardHeader>
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -116,7 +120,7 @@ export function SpecimenCard({
               type="button"
               onClick={() => onSelect(specimen)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
+                if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
                   onSelect(specimen);
                 }
@@ -151,3 +155,5 @@ export function SpecimenCard({
     </div>
   );
 }
+
+export const SpecimenCard = React.memo(SpecimenCardComponent);

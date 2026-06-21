@@ -1,15 +1,19 @@
-"use client";
+'use client';
+/**
+ * @file useFieldNotes.ts
+ * @description Implements hooks/useFieldNotes.ts for The Obsolete Human Museum.
+ */
 
-import { useState, useCallback, useEffect, useRef } from "react";
-import type { FieldNote, FieldNoteEntry } from "@/types";
-import { sanitizeText } from "@/lib/sanitizers";
+import { useState, useCallback, useEffect, useRef } from 'react';
+import type { FieldNote, FieldNoteEntry } from '@/types';
+import { sanitizeText } from '@/lib/sanitizers';
 
 // ─── localStorage helpers (SSR-safe) ────────────────────────
 
-const STORAGE_KEY_PREFIX = "the-obsolete-human:field-notes:";
+const STORAGE_KEY_PREFIX = 'the-obsolete-human:field-notes:';
 
 function loadNotes(specimenId: string): FieldNoteEntry[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY_PREFIX + specimenId);
     return raw ? (JSON.parse(raw) as FieldNoteEntry[]) : [];
@@ -19,11 +23,11 @@ function loadNotes(specimenId: string): FieldNoteEntry[] {
 }
 
 function saveNotes(specimenId: string, notes: FieldNoteEntry[]): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(
       STORAGE_KEY_PREFIX + specimenId,
-      JSON.stringify(notes),
+      JSON.stringify(notes)
     );
   } catch {
     // localStorage full — silently degrade
@@ -33,28 +37,34 @@ function saveNotes(specimenId: string, notes: FieldNoteEntry[]): void {
 // ─── Auto-generated daily observations ──────────────────────
 
 const DAILY_OBSERVATIONS: readonly string[] = [
-  "Specimen observed engaging in repetitive digital scrolling behavior. Duration exceeded expected thresholds.",
-  "Energy consumption patterns suggest continued reliance on legacy infrastructure. Adaptation rate: minimal.",
-  "Notable deviation in dietary procurement — specimen briefly considered a plant-based alternative before reverting.",
-  "Transport emissions logged. Subject appeared unaware of the carbon signature trailing behind their vehicle.",
-  "Specimen displayed acute anxiety when separated from personal electronics for more than 90 seconds.",
-  "Housing temperature control set well beyond comfort requirements. AC unit compensating for poor insulation.",
-  "Delivery drone arrival triggered a brief dopamine response. Contents: another item already owned in triplicate.",
+  'Specimen observed engaging in repetitive digital scrolling behavior. Duration exceeded expected thresholds.',
+  'Energy consumption patterns suggest continued reliance on legacy infrastructure. Adaptation rate: minimal.',
+  'Notable deviation in dietary procurement — specimen briefly considered a plant-based alternative before reverting.',
+  'Transport emissions logged. Subject appeared unaware of the carbon signature trailing behind their vehicle.',
+  'Specimen displayed acute anxiety when separated from personal electronics for more than 90 seconds.',
+  'Housing temperature control set well beyond comfort requirements. AC unit compensating for poor insulation.',
+  'Delivery drone arrival triggered a brief dopamine response. Contents: another item already owned in triplicate.',
   "Subject replaced a fully functional device with an incrementally improved model. Reason cited: 'the color.'",
 ];
 
 function generateDailyNote(specimenId: string): FieldNoteEntry {
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) /
-      (1000 * 60 * 60 * 24),
+      (1000 * 60 * 60 * 24)
   );
-  const index = (dayOfYear + specimenId.charCodeAt(0)) % DAILY_OBSERVATIONS.length;
+  const index =
+    (dayOfYear + specimenId.charCodeAt(0)) % DAILY_OBSERVATIONS.length;
 
   return {
     id: `auto-${specimenId}-${dayOfYear}`,
     date: new Date().toISOString(),
     content: DAILY_OBSERVATIONS[index]!,
-    severity: dayOfYear % 7 === 0 ? "critical" : dayOfYear % 3 === 0 ? "concern" : "observation",
+    severity:
+      dayOfYear % 7 === 0
+        ? 'critical'
+        : dayOfYear % 3 === 0
+          ? 'concern'
+          : 'observation',
   };
 }
 
@@ -64,7 +74,12 @@ function generateDailyNote(specimenId: string): FieldNoteEntry {
  * @description Custom hook usePersistedFieldNotes
  * @returns {any}
  */
-export function usePersistedFieldNotes(specimenId: string): { notes: FieldNoteEntry[]; isLoading: boolean; addNote: (content: string, severity?: FieldNoteEntry["severity"]) => boolean; removeNote: (noteId: string) => void } {
+export function usePersistedFieldNotes(specimenId: string): {
+  notes: FieldNoteEntry[];
+  isLoading: boolean;
+  addNote: (content: string, severity?: FieldNoteEntry['severity']) => boolean;
+  removeNote: (noteId: string) => void;
+} {
   const [notes, setNotes] = useState<FieldNoteEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const hasHydrated = useRef(false);
@@ -90,7 +105,7 @@ export function usePersistedFieldNotes(specimenId: string): { notes: FieldNoteEn
   }, [specimenId]);
 
   const addNote = useCallback(
-    (content: string, severity: FieldNoteEntry["severity"] = "observation") => {
+    (content: string, severity: FieldNoteEntry['severity'] = 'observation') => {
       const sanitized = sanitizeText(content);
       if (sanitized.length < 10) return false;
 
@@ -108,7 +123,7 @@ export function usePersistedFieldNotes(specimenId: string): { notes: FieldNoteEn
       });
       return true;
     },
-    [specimenId],
+    [specimenId]
   );
 
   const removeNote = useCallback(
@@ -119,7 +134,7 @@ export function usePersistedFieldNotes(specimenId: string): { notes: FieldNoteEn
         return updated;
       });
     },
-    [specimenId],
+    [specimenId]
   );
 
   return { notes, isLoading, addNote, removeNote };
@@ -132,7 +147,19 @@ export function usePersistedFieldNotes(specimenId: string): { notes: FieldNoteEn
  * @description Custom hook useFieldNotes
  * @returns {any}
  */
-export function useFieldNotes(initialNotes: FieldNote[] = []): { notes: FieldNote[]; isSubmitting: boolean; error: string | null; addNote: (specimenId: string, content: string, classification: FieldNote["classification"]) => boolean; removeNote: (noteId: string) => void; clearError: () => void; setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>> } {
+export function useFieldNotes(initialNotes: FieldNote[] = []): {
+  notes: FieldNote[];
+  isSubmitting: boolean;
+  error: string | null;
+  addNote: (
+    specimenId: string,
+    content: string,
+    classification: FieldNote['classification']
+  ) => boolean;
+  removeNote: (noteId: string) => void;
+  clearError: () => void;
+  setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
+} {
   const [notes, setNotes] = useState<FieldNote[]>(initialNotes);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -141,25 +168,25 @@ export function useFieldNotes(initialNotes: FieldNote[] = []): { notes: FieldNot
     (
       specimenId: string,
       content: string,
-      classification: FieldNote["classification"],
+      classification: FieldNote['classification']
     ) => {
       setError(null);
       const sanitizedContent = sanitizeText(content);
 
       if (sanitizedContent.length < 10) {
-        setError("Field note must be at least 10 characters.");
+        setError('Field note must be at least 10 characters.');
         return false;
       }
 
       if (sanitizedContent.length > 2000) {
-        setError("Field note must not exceed 2000 characters.");
+        setError('Field note must not exceed 2000 characters.');
         return false;
       }
 
       const newNote: FieldNote = {
         id: crypto.randomUUID(),
         specimenId,
-        author: "Field Researcher",
+        author: 'Field Researcher',
         date: new Date().toISOString(),
         content: sanitizedContent,
         classification,
@@ -168,7 +195,7 @@ export function useFieldNotes(initialNotes: FieldNote[] = []): { notes: FieldNot
       setNotes((prev) => [newNote, ...prev]);
       return true;
     },
-    [],
+    []
   );
 
   const removeNote = useCallback((noteId: string) => {

@@ -1,15 +1,21 @@
-"use client";
+'use client';
+/**
+ * @file HabitatCam.tsx
+ * @description Implements components/museum/HabitatCam.tsx for The Obsolete Human Museum.
+ */
 
-import { useState, useRef, useCallback } from "react";
-import type { HabitatData } from "@/types";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { ConservationStatus } from "@/components/museum/ConservationStatus";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { announce } from "@/components/accessibility/ScreenReaderAnnouncer";
-import { cn } from "@/lib/utils";
+import React from 'react';
+
+import { useState, useRef, useCallback } from 'react';
+import type { HabitatData } from '@/types';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { ConservationStatus } from '@/components/museum/ConservationStatus';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { announce } from '@/components/accessibility/ScreenReaderAnnouncer';
+import { cn } from '@/lib/utils';
 
 // Re-export for backward compatibility
-export { SAMPLE_HABITATS } from "@/lib/habitats";
+export { SAMPLE_HABITATS } from '@/lib/habitats';
 
 interface HabitatCamProps {
   habitat: HabitatData;
@@ -31,54 +37,70 @@ interface HabitatCamProps {
  * @description Component HabitatCam
  * @returns {JSX.Element}
  */
-export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element {
+function HabitatCamComponent({
+  habitat,
+  className,
+}: HabitatCamProps): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
   const [preview, setPreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadState, setUploadState] = useState<"idle" | "loading" | "done">("idle");
+  const [uploadState, setUploadState] = useState<'idle' | 'loading' | 'done'>(
+    'idle'
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formatHintId = `upload-format-hint-${habitat.id}`;
 
-  const handleFile = useCallback((file: File) => {
-    if (!file.type.startsWith("image/")) {
-      announce("Invalid file type. Please upload a JPEG or PNG image.");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      announce("File too large. Maximum size is 5 MB.");
-      return;
-    }
+  const handleFile = useCallback(
+    (file: File) => {
+      if (!file.type.startsWith('image/')) {
+        announce('Invalid file type. Please upload a JPEG or PNG image.');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        announce('File too large. Maximum size is 5 MB.');
+        return;
+      }
 
-    setUploadState("loading");
-    announce("Uploading habitat photograph...");
+      setUploadState('loading');
+      announce('Uploading habitat photograph...');
 
-    const reader = new FileReader();
-    reader.onload = (e): void => {
-      setPreview(e.target?.result as string);
-      setUploadState("done");
-      announce(`Habitat photograph uploaded for ${habitat.name}. Preview now available.`);
-    };
-    reader.onerror = (): void => {
-      setUploadState("idle");
-      announce("Upload failed. Please try again.");
-    };
-    reader.readAsDataURL(file);
-  }, [habitat.name]);
+      const reader = new FileReader();
+      reader.onload = (e): void => {
+        setPreview(e.target?.result as string);
+        setUploadState('done');
+        announce(
+          `Habitat photograph uploaded for ${habitat.name}. Preview now available.`
+        );
+      };
+      reader.onerror = (): void => {
+        setUploadState('idle');
+        announce('Upload failed. Please try again.');
+      };
+      reader.readAsDataURL(file);
+    },
+    [habitat.name]
+  );
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    },
+    [handleFile]
+  );
 
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) handleFile(file);
+    },
+    [handleFile]
+  );
 
   return (
-    <Card className={cn("overflow-hidden", className)}>
+    <Card className={cn('overflow-hidden', className)}>
       <CardHeader>
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -96,17 +118,20 @@ export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element
         {!preview ? (
           <div
             className={cn(
-              "relative w-full h-36 rounded-lg overflow-hidden border-2 border-dashed transition-colors cursor-pointer",
+              'relative w-full h-36 rounded-lg overflow-hidden border-2 border-dashed transition-colors cursor-pointer',
               isDragging
-                ? "border-museum-accent bg-museum-accent/10"
-                : "border-museum-border bg-gradient-to-br from-museum-bg to-museum-bg-elevated",
+                ? 'border-museum-accent bg-museum-accent/10'
+                : 'border-museum-border bg-gradient-to-br from-museum-bg to-museum-bg-elevated'
             )}
-            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDragging(true);
+            }}
             onDragLeave={() => setIsDragging(false)}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+              if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 fileInputRef.current?.click();
               }
@@ -127,12 +152,12 @@ export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element
               tabIndex={-1}
             />
 
-            {uploadState === "loading" ? (
+            {uploadState === 'loading' ? (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div
                   className={cn(
-                    "w-8 h-8 rounded-full border-2 border-museum-accent border-t-transparent",
-                    !prefersReducedMotion && "animate-spin",
+                    'w-8 h-8 rounded-full border-2 border-museum-accent border-t-transparent',
+                    !prefersReducedMotion && 'animate-spin'
                   )}
                   role="status"
                   aria-label="Uploading photograph"
@@ -145,8 +170,8 @@ export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element
                 {/* Ambient particles */}
                 <div
                   className={cn(
-                    "absolute inset-0",
-                    !prefersReducedMotion && "animate-pulse-slow",
+                    'absolute inset-0',
+                    !prefersReducedMotion && 'animate-pulse-slow'
                   )}
                   aria-hidden="true"
                 >
@@ -181,7 +206,7 @@ export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
                   <p className="text-xs text-museum-text-muted/60 font-mono">
-                    {isDragging ? "Drop image here" : "Upload habitat photo"}
+                    {isDragging ? 'Drop image here' : 'Upload habitat photo'}
                   </p>
                 </div>
 
@@ -189,8 +214,8 @@ export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element
                 <div className="absolute top-2 left-2 flex items-center gap-1.5">
                   <div
                     className={cn(
-                      "w-2 h-2 rounded-full bg-museum-danger",
-                      !prefersReducedMotion && "animate-pulse",
+                      'w-2 h-2 rounded-full bg-museum-danger',
+                      !prefersReducedMotion && 'animate-pulse'
                     )}
                     aria-hidden="true"
                   />
@@ -200,8 +225,11 @@ export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element
                 </div>
 
                 {/* Coordinates */}
-                <div className="absolute bottom-2 right-2 font-mono text-[9px] text-museum-text-muted/40" aria-hidden="true">
-                  {habitat.coordinates.lat.toFixed(4)}°N,{" "}
+                <div
+                  className="absolute bottom-2 right-2 font-mono text-[9px] text-museum-text-muted/40"
+                  aria-hidden="true"
+                >
+                  {habitat.coordinates.lat.toFixed(4)}°N,{' '}
                   {habitat.coordinates.lng.toFixed(4)}°W
                 </div>
               </>
@@ -218,7 +246,11 @@ export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element
             />
             <button
               type="button"
-              onClick={() => { setPreview(null); setUploadState("idle"); announce("Photo removed. Upload area restored."); }}
+              onClick={() => {
+                setPreview(null);
+                setUploadState('idle');
+                announce('Photo removed. Upload area restored.');
+              }}
               className="
                 absolute top-2 right-2 p-1.5 rounded-full
                 bg-museum-bg/80 backdrop-blur
@@ -229,15 +261,28 @@ export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element
               "
               aria-label="Remove uploaded photograph"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
           </div>
         )}
 
         {/* Format hint (always present for aria-describedby) */}
-        <p id={formatHintId} className="text-[10px] text-museum-text-muted/50 font-mono">
+        <p
+          id={formatHintId}
+          className="text-[10px] text-museum-text-muted/50 font-mono"
+        >
           Accepted: JPEG, PNG, WebP. Max 5 MB.
         </p>
 
@@ -281,3 +326,5 @@ export function HabitatCam({ habitat, className }: HabitatCamProps): JSX.Element
     </Card>
   );
 }
+
+export const HabitatCam = React.memo(HabitatCamComponent);

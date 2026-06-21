@@ -1,9 +1,13 @@
-import { cn } from "@/lib/utils";
+/**
+ * @file Skeleton.tsx
+ * @description Implements components/ui/Skeleton.tsx for The Obsolete Human Museum.
+ */
+import { cn } from '@/lib/utils';
 
 interface SkeletonProps {
   className?: string;
   lines?: number;
-  variant?: "text" | "card" | "circle" | "rect";
+  variant?: 'text' | 'card' | 'circle' | 'rect';
 }
 
 /**
@@ -13,18 +17,17 @@ interface SkeletonProps {
 export function Skeleton({
   className,
   lines = 1,
-  variant = "text",
+  variant = 'text',
 }: SkeletonProps): JSX.Element {
-  const baseClasses =
-    "motion-safe:animate-pulse bg-museum-bg-elevated rounded";
+  const baseClasses = 'motion-safe:animate-pulse bg-museum-bg-elevated rounded';
 
-  if (variant === "card") {
+  if (variant === 'card') {
     return (
       <div
         className={cn(
           baseClasses,
-          "w-full h-48 rounded-xl border border-museum-border",
-          className,
+          'w-full h-48 rounded-xl border border-museum-border',
+          className
         )}
         role="status"
         aria-label="Loading content"
@@ -34,10 +37,10 @@ export function Skeleton({
     );
   }
 
-  if (variant === "circle") {
+  if (variant === 'circle') {
     return (
       <div
-        className={cn(baseClasses, "w-12 h-12 rounded-full", className)}
+        className={cn(baseClasses, 'w-12 h-12 rounded-full', className)}
         role="status"
         aria-label="Loading content"
       >
@@ -46,10 +49,10 @@ export function Skeleton({
     );
   }
 
-  if (variant === "rect") {
+  if (variant === 'rect') {
     return (
       <div
-        className={cn(baseClasses, "w-full h-24 rounded-lg", className)}
+        className={cn(baseClasses, 'w-full h-24 rounded-lg', className)}
         role="status"
         aria-label="Loading content"
       >
@@ -70,9 +73,9 @@ export function Skeleton({
           key={i}
           className={cn(
             baseClasses,
-            "h-4",
-            i === lines - 1 ? "w-3/4" : "w-full",
-            className,
+            'h-4',
+            i === lines - 1 ? 'w-3/4' : 'w-full',
+            className
           )}
         />
       ))}

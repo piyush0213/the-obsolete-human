@@ -1,52 +1,58 @@
-"use client";
+'use client';
+/**
+ * @file page.tsx
+ * @description Implements app/taxidermy/page.tsx for The Obsolete Human Museum.
+ */
 
-import { useState, useMemo } from "react";
-import type { TaxidermyPlaque as TaxidermyPlaqueType } from "@/types";
-import { TaxidermyPlaque } from "@/components/museum/TaxidermyPlaque";
-import { Dialog } from "@/components/ui/Dialog";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { formatMuseumDate } from "@/lib/utils";
+import React from 'react';
+
+import { useState, useMemo } from 'react';
+import type { TaxidermyPlaque as TaxidermyPlaqueType } from '@/types';
+import { TaxidermyPlaque } from '@/components/museum/TaxidermyPlaque';
+import { Dialog } from '@/components/ui/Dialog';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { formatMuseumDate } from '@/lib/utils';
 
 const PLAQUES: TaxidermyPlaqueType[] = [
   {
-    specimenId: "TOH-K7R2M-A4B9",
-    title: "The Last Manual Driver",
-    dateOfPreservation: "2024-03-15T00:00:00.000Z",
-    preservationMethod: "Holographic Neural Capture (HNC-7)",
+    specimenId: 'TOH-K7R2M-A4B9',
+    title: 'The Last Manual Driver',
+    dateOfPreservation: '2024-03-15T00:00:00.000Z',
+    preservationMethod: 'Holographic Neural Capture (HNC-7)',
     curatorNotes:
       "Preserved at the precise moment the specimen activated the combustion engine's ignition sequence — a cascade of controlled explosions that would propel a 1,800-kilogram metal chassis at velocities exceeding 100 km/h. The subject's calm demeanor during this objectively terrifying procedure remains a source of scholarly fascination.",
-    exhibitHall: "Hall of Forgotten Commutes",
-    donorAttribution: "The Musk Foundation for Automotive History",
+    exhibitHall: 'Hall of Forgotten Commutes',
+    donorAttribution: 'The Musk Foundation for Automotive History',
   },
   {
-    specimenId: "TOH-P3Q8N-C5D2",
-    title: "The Currency Counter",
-    dateOfPreservation: "2023-11-20T00:00:00.000Z",
-    preservationMethod: "Temporal Crystallization (TC-3)",
+    specimenId: 'TOH-P3Q8N-C5D2',
+    title: 'The Currency Counter',
+    dateOfPreservation: '2023-11-20T00:00:00.000Z',
+    preservationMethod: 'Temporal Crystallization (TC-3)',
     curatorNotes:
-      "Captured mid-transaction at a street market, this specimen is shown exchanging processed cellulose rectangles for organic produce. Note the characteristic thumb-and-forefinger motion used to separate individual notes — a fine motor skill now lost to the species entirely.",
-    exhibitHall: "Gallery of Analog Communication",
-    donorAttribution: "The Federal Reserve Historical Society",
+      'Captured mid-transaction at a street market, this specimen is shown exchanging processed cellulose rectangles for organic produce. Note the characteristic thumb-and-forefinger motion used to separate individual notes — a fine motor skill now lost to the species entirely.',
+    exhibitHall: 'Gallery of Analog Communication',
+    donorAttribution: 'The Federal Reserve Historical Society',
   },
   {
-    specimenId: "TOH-L9M4K-E7F3",
-    title: "The Cubicle Sentinel",
-    dateOfPreservation: "2024-06-01T00:00:00.000Z",
-    preservationMethod: "Ambient Field Suspension (AFS-12)",
+    specimenId: 'TOH-L9M4K-E7F3',
+    title: 'The Cubicle Sentinel',
+    dateOfPreservation: '2024-06-01T00:00:00.000Z',
+    preservationMethod: 'Ambient Field Suspension (AFS-12)',
     curatorNotes:
       "This specimen was preserved during 'the afternoon slump' — a daily circadian trough that afflicted office workers between 14:00 and 15:30. The subject is seated in a pneumatic chair, staring at a luminous rectangle, one hand resting on a peripheral input device called a 'mouse.'",
-    exhibitHall: "Wing of Manual Labor",
+    exhibitHall: 'Wing of Manual Labor',
   },
   {
-    specimenId: "TOH-R5S1T-G8H4",
-    title: "The Aisle Navigator",
-    dateOfPreservation: "2024-08-10T00:00:00.000Z",
-    preservationMethod: "Quantum State Freezing (QSF-2)",
+    specimenId: 'TOH-R5S1T-G8H4',
+    title: 'The Aisle Navigator',
+    dateOfPreservation: '2024-08-10T00:00:00.000Z',
+    preservationMethod: 'Quantum State Freezing (QSF-2)',
     curatorNotes:
       "Frozen at the moment of selecting a cereal product from among 47 nearly identical options. The subject's expression — a mixture of concentration, mild confusion, and resigned acceptance — has been cited in over 200 academic papers on the paradox of choice.",
-    exhibitHall: "Chamber of Physical Commerce",
-    donorAttribution: "The Walmart Anthropological Trust",
+    exhibitHall: 'Chamber of Physical Commerce',
+    donorAttribution: 'The Walmart Anthropological Trust',
   },
 ];
 
@@ -56,26 +62,21 @@ const HALLS = Array.from(new Set(PLAQUES.map((p) => p.exhibitHall)));
  * @description Displays a searchable grid of saved behavioral specimens.
  * @returns {JSX.Element} The taxidermy archive interface.
  */
-export default function TaxidermyPage(): JSX.Element {
+function TaxidermyPageComponent(): JSX.Element {
   const [selectedPlaque, setSelectedPlaque] =
     useState<TaxidermyPlaqueType | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [hallFilter, setHallFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [hallFilter, setHallFilter] = useState('');
 
   const filtered = useMemo(() => {
     return PLAQUES.filter((plaque) => {
       const matchesSearch =
         !searchQuery ||
         plaque.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        plaque.curatorNotes
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        plaque.specimenId
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
+        plaque.curatorNotes.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        plaque.specimenId.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesHall =
-        !hallFilter || plaque.exhibitHall === hallFilter;
+      const matchesHall = !hallFilter || plaque.exhibitHall === hallFilter;
 
       return matchesSearch && matchesHall;
     });
@@ -94,8 +95,8 @@ export default function TaxidermyPage(): JSX.Element {
           <p className="text-museum-text-muted max-w-2xl mx-auto leading-relaxed">
             Our most meticulously preserved specimens, frozen at the exact
             moment of their peak cultural significance. Each display captures
-            not just the physical form, but the emotional resonance of
-            behaviors that defined an era.
+            not just the physical form, but the emotional resonance of behaviors
+            that defined an era.
           </p>
         </header>
 
@@ -114,7 +115,7 @@ export default function TaxidermyPage(): JSX.Element {
             <Select
               label="Exhibit Hall"
               options={[
-                { value: "", label: "All Halls" },
+                { value: '', label: 'All Halls' },
                 ...HALLS.map((hall) => ({ value: hall, label: hall })),
               ]}
               value={hallFilter}
@@ -157,7 +158,7 @@ export default function TaxidermyPage(): JSX.Element {
         <Dialog
           open={selectedPlaque !== null}
           onClose={() => setSelectedPlaque(null)}
-          title={selectedPlaque?.title ?? "Specimen Details"}
+          title={selectedPlaque?.title ?? 'Specimen Details'}
           description={
             selectedPlaque
               ? `Specimen ${selectedPlaque.specimenId} — ${selectedPlaque.exhibitHall}`
@@ -217,3 +218,5 @@ export default function TaxidermyPage(): JSX.Element {
     </div>
   );
 }
+
+export default React.memo(TaxidermyPageComponent);

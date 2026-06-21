@@ -1,4 +1,8 @@
-"use client";
+'use client';
+/**
+ * @file SkipToContent.tsx
+ * @description Implements components/accessibility/SkipToContent.tsx for The Obsolete Human Museum.
+ */
 
 /**
  * SkipToContent — Accessibility skip-navigation link.

@@ -1,8 +1,12 @@
-"use client";
+'use client';
+/**
+ * @file NavigationLink.tsx
+ * @description Implements components/museum/NavigationLink.tsx for The Obsolete Human Museum.
+ */
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 interface NavigationLinkProps {
   href: string;
@@ -20,23 +24,26 @@ interface NavigationLinkProps {
  * @description Component NavigationLink
  * @returns {JSX.Element}
  */
-export function NavigationLink({ href, label, ariaLabel }: NavigationLinkProps): JSX.Element {
+export function NavigationLink({
+  href,
+  label,
+  ariaLabel,
+}: NavigationLinkProps): JSX.Element {
   const pathname = usePathname();
-  const isActive =
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   return (
     <Link
       href={href}
       className={cn(
-        "px-3 py-2 rounded-lg text-sm font-sans transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-museum-accent",
+        'px-3 py-2 rounded-lg text-sm font-sans transition-colors',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-museum-accent',
         isActive
-          ? "text-museum-accent bg-museum-accent/10 border border-museum-accent/20"
-          : "text-museum-text-muted hover:text-museum-text hover:bg-museum-bg-elevated",
+          ? 'text-museum-accent bg-museum-accent/10 border border-museum-accent/20'
+          : 'text-museum-text-muted hover:text-museum-text hover:bg-museum-bg-elevated'
       )}
       aria-label={ariaLabel}
-      aria-current={isActive ? "page" : undefined}
+      aria-current={isActive ? 'page' : undefined}
     >
       {label}
     </Link>

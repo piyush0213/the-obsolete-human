@@ -1,12 +1,18 @@
-"use client";
+'use client';
+/**
+ * @file FieldNotes.tsx
+ * @description Implements components/museum/FieldNotes.tsx for The Obsolete Human Museum.
+ */
 
-import { useState } from "react";
-import type { FieldNote } from "@/types";
-import { Button } from "@/components/ui/Button";
-import { Select } from "@/components/ui/Select";
-import { useFieldNotes } from "@/hooks/useFieldNotes";
-import { formatMuseumDate, truncateText } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import React from 'react';
+
+import { useState } from 'react';
+import type { FieldNote } from '@/types';
+import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
+import { useFieldNotes } from '@/hooks/useFieldNotes';
+import { formatMuseumDate, truncateText } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 interface FieldNotesProps {
   specimenId: string;
@@ -14,26 +20,29 @@ interface FieldNotesProps {
 }
 
 const CLASSIFICATION_OPTIONS = [
-  { value: "OBSERVATION", label: "Observation" },
-  { value: "HYPOTHESIS", label: "Hypothesis" },
-  { value: "CONCLUSION", label: "Conclusion" },
+  { value: 'OBSERVATION', label: 'Observation' },
+  { value: 'HYPOTHESIS', label: 'Hypothesis' },
+  { value: 'CONCLUSION', label: 'Conclusion' },
 ] as const;
 
-const SEVERITY_STYLES: Record<string, { bg: string; text: string; icon: string }> = {
+const SEVERITY_STYLES: Record<
+  string,
+  { bg: string; text: string; icon: string }
+> = {
   OBSERVATION: {
-    bg: "bg-museum-secondary/20",
-    text: "text-museum-secondary",
-    icon: "◉",
+    bg: 'bg-museum-secondary/20',
+    text: 'text-museum-secondary',
+    icon: '◉',
   },
   HYPOTHESIS: {
-    bg: "bg-museum-accent/20",
-    text: "text-museum-accent",
-    icon: "◈",
+    bg: 'bg-museum-accent/20',
+    text: 'text-museum-accent',
+    icon: '◈',
   },
   CONCLUSION: {
-    bg: "bg-museum-primary/20",
-    text: "text-museum-text",
-    icon: "◆",
+    bg: 'bg-museum-primary/20',
+    text: 'text-museum-text',
+    icon: '◆',
   },
 };
 
@@ -51,18 +60,21 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; icon: string }
  * @description Component FieldNotes
  * @returns {JSX.Element}
  */
-export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps): JSX.Element {
+function FieldNotesComponent({
+  specimenId,
+  initialNotes = [],
+}: FieldNotesProps): JSX.Element {
   const { notes, error, addNote, removeNote, clearError } =
     useFieldNotes(initialNotes);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const [classification, setClassification] =
-    useState<FieldNote["classification"]>("OBSERVATION");
+    useState<FieldNote['classification']>('OBSERVATION');
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const success = addNote(specimenId, content, classification);
     if (success) {
-      setContent("");
+      setContent('');
     }
   };
 
@@ -124,8 +136,8 @@ export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps): 
               resize-none
             "
             aria-label="Write your field note observation"
-            aria-invalid={error ? "true" : undefined}
-            aria-describedby={error ? "field-note-error" : undefined}
+            aria-invalid={error ? 'true' : undefined}
+            aria-describedby={error ? 'field-note-error' : undefined}
           />
           <p
             className="text-xs text-museum-text-muted mt-1 text-right font-mono"
@@ -142,9 +154,7 @@ export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps): 
               options={[...CLASSIFICATION_OPTIONS]}
               value={classification}
               onChange={(e) =>
-                setClassification(
-                  e.target.value as FieldNote["classification"],
-                )
+                setClassification(e.target.value as FieldNote['classification'])
               }
               aria-label="Note classification type"
             />
@@ -166,11 +176,7 @@ export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps): 
       </form>
 
       {/* ── Chronological note log ── */}
-      <ol
-        role="log"
-        aria-label="Field notes journal"
-        className="space-y-3"
-      >
+      <ol role="log" aria-label="Field notes journal" className="space-y-3">
         {notes.length === 0 && (
           <li className="text-sm text-museum-text-muted italic text-center py-8">
             No field notes recorded for this specimen. Be the first researcher
@@ -180,7 +186,9 @@ export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps): 
         {notes.map((note) => {
           const dateFormatted = formatMuseumDate(note.date);
           const truncated = truncateText(note.content, 80);
-          const style = SEVERITY_STYLES[note.classification] ?? SEVERITY_STYLES.OBSERVATION!;
+          const style =
+            SEVERITY_STYLES[note.classification] ??
+            SEVERITY_STYLES.OBSERVATION!;
 
           return (
             <li
@@ -191,15 +199,18 @@ export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps): 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {/* Classification icon (decorative) */}
-                  <span aria-hidden="true" className={cn("text-sm", style.text)}>
+                  <span
+                    aria-hidden="true"
+                    className={cn('text-sm', style.text)}
+                  >
                     {style.icon}
                   </span>
                   <span
                     className={cn(
-                      "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider border",
+                      'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider border',
                       style.bg,
                       style.text,
-                      `border-current/30`,
+                      `border-current/30`
                     )}
                   >
                     {note.classification}
@@ -242,9 +253,7 @@ export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps): 
               <p className="text-sm text-museum-text leading-relaxed">
                 {note.content}
               </p>
-              <p className="text-xs text-museum-text-muted">
-                — {note.author}
-              </p>
+              <p className="text-xs text-museum-text-muted">— {note.author}</p>
             </li>
           );
         })}
@@ -252,3 +261,5 @@ export function FieldNotes({ specimenId, initialNotes = [] }: FieldNotesProps): 
     </section>
   );
 }
+
+export const FieldNotes = React.memo(FieldNotesComponent);

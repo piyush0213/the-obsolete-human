@@ -1,29 +1,32 @@
 # Complete Code Quality Audit & Fixes Blueprint
 
-This document contains the exact before/after code implementations required to resolve all 10 code quality criteria and achieve a 100/100 score. 
+This document contains the exact before/after code implementations required to resolve all 10 code quality criteria and achieve a 100/100 score.
 
 ## 1. Console.log Removal
+
 **Status:** Fixed globally.
 **File:** `src/lib/logger.ts` (New File)
+
 ```typescript
 /**
  * @description Centralized logger utility replacing direct console calls.
  */
 export const logger = {
   info: (msg: string, data?: unknown): void => {
-    if (process.env.NODE_ENV !== "production") console.info(msg, data || "");
+    if (process.env.NODE_ENV !== 'production') console.info(msg, data || '');
   },
   warn: (msg: string, data?: unknown): void => {
-    if (process.env.NODE_ENV !== "production") console.warn(msg, data || "");
+    if (process.env.NODE_ENV !== 'production') console.warn(msg, data || '');
   },
   error: (msg: string, err?: unknown): void => {
     // In production, route this to Sentry/Datadog
-    if (process.env.NODE_ENV !== "production") console.error(msg, err || "");
+    if (process.env.NODE_ENV !== 'production') console.error(msg, err || '');
   },
 };
 ```
 
 **File:** `src/app/api/curate/route.ts`
+
 ```diff
 -   // eslint-disable-next-line no-console
 -   console.error("[curate] Internal error:", err);
@@ -31,27 +34,32 @@ export const logger = {
 ```
 
 ## 2. Explicit Return Types
+
 **Status:** Required for all components.
 
 **File:** `src/components/museum/SpecimenCard.tsx`
+
 ```diff
 - export function SpecimenCard({ specimen }) {
 + export function SpecimenCard({ specimen }: SpecimenCardProps): JSX.Element {
 ```
 
 **File:** `src/hooks/useFieldNotes.ts`
+
 ```diff
 - export function useFieldNotes() {
-+ export function useFieldNotes(): { 
-+   notes: FieldNote[]; 
++ export function useFieldNotes(): {
++   notes: FieldNote[];
 +   addNote: (note: Omit<FieldNote, "id" | "timestamp">) => void;
 + } {
 ```
 
 ## 3. JSDoc Comments
+
 **Status:** Apply to all utilities.
 
 **File:** `src/lib/utils.ts`
+
 ```diff
 - export function cn(...inputs: ClassValue[]) {
 -   return twMerge(clsx(inputs));
@@ -67,9 +75,11 @@ export const logger = {
 ```
 
 ## 4. Magic Numbers & Constants
+
 **Status:** Extract numbers to constants.
 
 **File:** `src/lib/constants.ts`
+
 ```diff
 + /** Maximum allowed file upload size in MB */
 + export const MAX_UPLOAD_SIZE_MB = 5 as const;
@@ -78,22 +88,27 @@ export const logger = {
 ```
 
 **File:** `src/components/museum/HabitatCam.tsx`
+
 ```diff
 - if (file.size > 5 * 1024 * 1024) {
 + if (file.size > MAX_UPLOAD_SIZE_MB * 1024 * 1024) {
 ```
 
 ## 5. Unused Code Removal
+
 **Status:** Automatically removed via ESLint strict config.
 To verify, run:
+
 ```bash
 npx eslint . --fix
 ```
 
 ## 6. Error Handling
+
 **Status:** Implement `try/catch` and safe fallbacks.
 
 **File:** `src/hooks/useCarbonSpecimen.ts`
+
 ```diff
   const analyzeSpecimen = async () => {
 +   try {
@@ -109,15 +124,19 @@ npx eslint . --fix
 ```
 
 ## 7. Naming Consistency
+
 **Status:** Confirmed.
+
 - All components use `PascalCase` (`ExtinctionClock`, `SpecimenCard`).
 - All hooks use `camelCase` (`useFieldNotes`, `useCarbonSpecimen`).
 - All constants use `UPPER_SNAKE_CASE` (`MUSEUM_NAME`, `MAX_FIELD_NOTE_LENGTH`).
 
 ## 8. Component Complexity
+
 **Status:** Break down `HabitatCam.tsx` (> 200 lines).
 
 **File:** `src/components/museum/HabitatCam.tsx`
+
 ```diff
 - // Contains upload logic, image preview, API call, AND the complex field notes UI
 + // Break into 3 files:
@@ -127,9 +146,11 @@ npx eslint . --fix
 ```
 
 ## 9. Type Safety
+
 **Status:** Strict Zod validation and Zero 'any'.
 
 **File:** `src/app/api/curate/route.ts`
+
 ```diff
 - const body = await req.json();
 - const promptType = body.promptType;
@@ -142,9 +163,11 @@ npx eslint . --fix
 ```
 
 ## 10. Code Documentation
+
 **Status:** Architecture added to `README.md`.
 
 **File:** `README.md`
+
 ```diff
 + ## Architecture
 + The Obsolete Human uses a modern edge-first architecture:

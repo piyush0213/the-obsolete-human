@@ -1,3 +1,7 @@
+/**
+ * @file SpecimenCard.test.tsx
+ * @description Implements tests/components/SpecimenCard.test.tsx for The Obsolete Human Museum.
+ */
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { SpecimenCard } from '@/components/museum/SpecimenCard';
@@ -49,17 +53,21 @@ describe('SpecimenCard', () => {
   it('allows keyboard Enter to open details', () => {
     const handleSelect = vi.fn();
     render(<SpecimenCard specimen={mockSpecimen} onSelect={handleSelect} />);
-    
-    const button = screen.getByRole('button', { name: /View full classification/i });
+
+    const button = screen.getByRole('button', {
+      name: /View full classification/i,
+    });
     button.focus();
     fireEvent.keyDown(button, { key: 'Enter', code: 'Enter' });
-    
+
     expect(handleSelect).toHaveBeenCalledWith(mockSpecimen);
   });
 
   it('ensures all text content and tags are present', () => {
     render(<SpecimenCard specimen={mockSpecimen} />);
-    const list = screen.getByRole('list', { name: /Specimen classification tags/i });
+    const list = screen.getByRole('list', {
+      name: /Specimen classification tags/i,
+    });
     expect(list).toBeInTheDocument();
     expect(screen.getByText('transportation')).toBeInTheDocument();
     expect(screen.getByText('fossil-fuel')).toBeInTheDocument();

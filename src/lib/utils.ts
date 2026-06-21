@@ -1,4 +1,8 @@
 /**
+ * @file utils.ts
+ * @description Implements lib/utils.ts for The Obsolete Human Museum.
+ */
+/**
  * Simplified class value type for className merging
  */
 export type ClassValue =
@@ -18,21 +22,21 @@ function clsx(...args: ClassValue[]): string {
 
   for (const arg of args) {
     if (!arg) continue;
-    if (typeof arg === "string") {
+    if (typeof arg === 'string') {
       classes.push(arg);
-    } else if (typeof arg === "number") {
+    } else if (typeof arg === 'number') {
       classes.push(String(arg));
     } else if (Array.isArray(arg)) {
       const inner = clsx(...arg);
       if (inner) classes.push(inner);
-    } else if (typeof arg === "object") {
+    } else if (typeof arg === 'object') {
       for (const [key, value] of Object.entries(arg)) {
         if (value) classes.push(key);
       }
     }
   }
 
-  return classes.join(" ");
+  return classes.join(' ');
 }
 
 /**
@@ -46,7 +50,7 @@ export function cn(...inputs: ClassValue[]): string {
 /**
  * Format a number with locale-specific thousand separators
  */
-export function formatNumber(value: number, locale = "en-US"): string {
+export function formatNumber(value: number, locale = 'en-US'): string {
   return new Intl.NumberFormat(locale).format(value);
 }
 
@@ -56,13 +60,13 @@ export function formatNumber(value: number, locale = "en-US"): string {
 export function formatMuseumDate(dateString: string): string {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
-    return "Date Unknown";
+    return 'Date Unknown';
   }
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    era: "short",
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    era: 'short',
   }).format(date);
 }
 
@@ -70,7 +74,7 @@ export function formatMuseumDate(dateString: string): string {
  * Generate a unique catalog number in museum format
  */
 export function generateCatalogNumber(): string {
-  const prefix = "TOH";
+  const prefix = 'TOH';
   const timestamp = Date.now().toString(36).toUpperCase();
   const random = Math.random().toString(36).substring(2, 6).toUpperCase();
   return `${prefix}-${timestamp}-${random}`;
@@ -81,7 +85,7 @@ export function generateCatalogNumber(): string {
  */
 export function yearsUntilExtinction(
   currentRate: number,
-  declinePerYear: number,
+  declinePerYear: number
 ): number {
   if (declinePerYear <= 0) return Infinity;
   if (currentRate <= 0) return 0;
@@ -102,8 +106,8 @@ export function kgCO2ToTrees(kgCO2: number): number {
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   const truncated = text.substring(0, maxLength);
-  const lastSpace = truncated.lastIndexOf(" ");
-  return (lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated) + "…";
+  const lastSpace = truncated.lastIndexOf(' ');
+  return (lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated) + '…';
 }
 
 /**
@@ -111,7 +115,7 @@ export function truncateText(text: string, maxLength: number): string {
  */
 export function debounce<T extends (...args: never[]) => unknown>(
   fn: T,
-  delay: number,
+  delay: number
 ): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout>;
   return (...args: Parameters<T>) => {

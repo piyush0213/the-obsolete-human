@@ -1,7 +1,11 @@
-import { describe, it, expect } from "vitest";
-import type { HabitsInput } from "@/types";
+/**
+ * @file extinction.test.ts
+ * @description Implements tests/unit/extinction.test.ts for The Obsolete Human Museum.
+ */
+import { describe, it, expect } from 'vitest';
+import type { HabitsInput } from '@/types';
 import {
-  calculateCarbonEmissions,
+  calculateCarbonFootprint,
   calculateLifestyleExpiry,
   translateToTreeHours,
   getConservationStatus,
@@ -10,14 +14,14 @@ import {
   formatYearsRemaining,
   EXTINCTION_CLOCK_DATA,
   SAMPLE_SPECIMENS,
-} from "@/lib/extinction";
+} from '@/lib/carbon-calculator';
 
 // ═══════════════════════════════════════════════════════════════
 // calculateLifestyleExpiry
 // ═══════════════════════════════════════════════════════════════
 
-describe("calculateLifestyleExpiry", () => {
-  it("should return ~18 months from now for 3 tonnes/year (budget 1.5t)", () => {
+describe('calculateLifestyleExpiry', () => {
+  it('should return ~18 months from now for 3 tonnes/year (budget 1.5t)', () => {
     // budget = 1500 kg, annual = 3000 kg → 0.5 years = 6 months
     const expiry = calculateLifestyleExpiry(3000, 1.5);
     const now = Date.now();
@@ -29,7 +33,7 @@ describe("calculateLifestyleExpiry", () => {
     expect(diffMonths).toBeLessThan(7);
   });
 
-  it("should return ~3 years from now for 0.5 tonnes/year (budget 1.5t)", () => {
+  it('should return ~3 years from now for 0.5 tonnes/year (budget 1.5t)', () => {
     // budget = 1500 kg, annual = 500 kg → 3 years
     const expiry = calculateLifestyleExpiry(500, 1.5);
     const now = Date.now();
@@ -40,33 +44,31 @@ describe("calculateLifestyleExpiry", () => {
     expect(diffYears).toBeLessThan(3.1);
   });
 
-  it("should return a very distant date for near-zero emissions", () => {
+  it('should return a very distant date for near-zero emissions', () => {
     const expiry = calculateLifestyleExpiry(1, 1.5);
     const now = Date.now();
-    const diffYears =
-      (expiry.getTime() - now) / (1000 * 60 * 60 * 24 * 365.25);
+    const diffYears = (expiry.getTime() - now) / (1000 * 60 * 60 * 24 * 365.25);
 
     // 1500 kg / 1 kg = 1500 years
     expect(diffYears).toBeGreaterThan(1400);
   });
 
-  it("should return a date in the future", () => {
+  it('should return a date in the future', () => {
     const expiry = calculateLifestyleExpiry(5000);
     expect(expiry.getTime()).toBeGreaterThan(Date.now());
   });
 
-  it("should return sooner expiry for higher emissions", () => {
+  it('should return sooner expiry for higher emissions', () => {
     const low = calculateLifestyleExpiry(1000);
     const high = calculateLifestyleExpiry(10000);
     expect(high.getTime()).toBeLessThan(low.getTime());
   });
 
-  it("should use 1.5t default budget when not specified", () => {
+  it('should use 1.5t default budget when not specified', () => {
     // 1500 kg budget / 1500 kg annual = 1 year
     const expiry = calculateLifestyleExpiry(1500);
     const now = Date.now();
-    const diffYears =
-      (expiry.getTime() - now) / (1000 * 60 * 60 * 24 * 365.25);
+    const diffYears = (expiry.getTime() - now) / (1000 * 60 * 60 * 24 * 365.25);
 
     expect(diffYears).toBeGreaterThan(0.9);
     expect(diffYears).toBeLessThan(1.1);
@@ -74,92 +76,92 @@ describe("calculateLifestyleExpiry", () => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-// calculateCarbonEmissions
+// calculateCarbonFootprint
 // ═══════════════════════════════════════════════════════════════
 
-describe("calculateCarbonEmissions", () => {
+describe('calculateCarbonFootprint', () => {
   const baseHabits: HabitsInput = {
-    name: "Test Subject",
-    diet: "omnivore",
-    transport: "public",
+    name: 'Test Subject',
+    diet: 'omnivore',
+    transport: 'public',
     weeklyKm: 50,
-    energySource: "mixed",
-    housingType: "apartment",
-    acUsage: "none",
+    energySource: 'mixed',
+    housingType: 'apartment',
+    acUsage: 'none',
     deliveriesPerWeek: 2,
-    electronicsReplacement: "bi_yearly",
+    electronicsReplacement: 'bi_yearly',
   };
 
-  it("should return a positive number for typical habits", () => {
-    const emissions = calculateCarbonEmissions(baseHabits);
+  it('should return a positive number for typical habits', () => {
+    const emissions = calculateCarbonFootprint(baseHabits);
     expect(emissions).toBeGreaterThan(0);
   });
 
-  it("should return higher emissions for carnivore diet", () => {
-    const omnivore = calculateCarbonEmissions(baseHabits);
-    const carnivore = calculateCarbonEmissions({
+  it('should return higher emissions for carnivore diet', () => {
+    const omnivore = calculateCarbonFootprint(baseHabits);
+    const carnivore = calculateCarbonFootprint({
       ...baseHabits,
-      diet: "carnivore",
+      diet: 'carnivore',
     });
     expect(carnivore).toBeGreaterThan(omnivore);
   });
 
-  it("should return higher emissions for private transport with more km", () => {
-    const publicTransport = calculateCarbonEmissions(baseHabits);
-    const privateHeavy = calculateCarbonEmissions({
+  it('should return higher emissions for private transport with more km', () => {
+    const publicTransport = calculateCarbonFootprint(baseHabits);
+    const privateHeavy = calculateCarbonFootprint({
       ...baseHabits,
-      transport: "private",
+      transport: 'private',
       weeklyKm: 300,
     });
     expect(privateHeavy).toBeGreaterThan(publicTransport);
   });
 
-  it("should return lower emissions for renewable energy", () => {
-    const mixed = calculateCarbonEmissions(baseHabits);
-    const renewable = calculateCarbonEmissions({
+  it('should return lower emissions for renewable energy', () => {
+    const mixed = calculateCarbonFootprint(baseHabits);
+    const renewable = calculateCarbonFootprint({
       ...baseHabits,
-      energySource: "renewable",
+      energySource: 'renewable',
     });
     expect(renewable).toBeLessThan(mixed);
   });
 
-  it("should return lower emissions for shared housing", () => {
-    const apartment = calculateCarbonEmissions(baseHabits);
-    const shared = calculateCarbonEmissions({
+  it('should return lower emissions for shared housing', () => {
+    const apartment = calculateCarbonFootprint(baseHabits);
+    const shared = calculateCarbonFootprint({
       ...baseHabits,
-      housingType: "shared",
+      housingType: 'shared',
     });
     expect(shared).toBeLessThan(apartment);
   });
 
-  it("should increase with more deliveries", () => {
-    const few = calculateCarbonEmissions(baseHabits);
-    const many = calculateCarbonEmissions({
+  it('should increase with more deliveries', () => {
+    const few = calculateCarbonFootprint(baseHabits);
+    const many = calculateCarbonFootprint({
       ...baseHabits,
       deliveriesPerWeek: 20,
     });
     expect(many).toBeGreaterThan(few);
   });
 
-  it("should return zero transport contribution for zero km", () => {
-    const zeroKm = calculateCarbonEmissions({
+  it('should return zero transport contribution for zero km', () => {
+    const zeroKm = calculateCarbonFootprint({
       ...baseHabits,
       weeklyKm: 0,
-      transport: "private",
+      transport: 'private',
     });
-    const someKm = calculateCarbonEmissions({
+    const someKm = calculateCarbonFootprint({
       ...baseHabits,
       weeklyKm: 100,
-      transport: "private",
+      transport: 'private',
     });
     expect(zeroKm).toBeLessThan(someKm);
   });
 
-  it("should add AC usage to total", () => {
-    const noAc = calculateCarbonEmissions(baseHabits);
-    const constantAc = calculateCarbonEmissions({
+  it('should add AC usage to total', () => {
+    const noAc = calculateCarbonFootprint(baseHabits);
+    const constantAc = calculateCarbonFootprint({
       ...baseHabits,
-      acUsage: "constant",
+      acUsage: 'constant',
     });
     expect(constantAc).toBeGreaterThan(noAc);
   });
@@ -169,23 +171,23 @@ describe("calculateCarbonEmissions", () => {
 // translateToTreeHours
 // ═══════════════════════════════════════════════════════════════
 
-describe("translateToTreeHours", () => {
-  it("should return a readable string for 1000 kg", () => {
+describe('translateToTreeHours', () => {
+  it('should return a readable string for 1000 kg', () => {
     const result = translateToTreeHours(1000);
     expect(result).toMatch(/\d+ trees? working for \d+ months?/);
   });
 
   it("should contain 'trees' for large values", () => {
     const result = translateToTreeHours(1000);
-    expect(result).toContain("trees");
+    expect(result).toContain('trees');
   });
 
   it("should return '0 trees working for 0 months' for zero emissions", () => {
-    expect(translateToTreeHours(0)).toBe("0 trees working for 0 months");
+    expect(translateToTreeHours(0)).toBe('0 trees working for 0 months');
   });
 
   it("should return '0 trees working for 0 months' for negative emissions", () => {
-    expect(translateToTreeHours(-100)).toBe("0 trees working for 0 months");
+    expect(translateToTreeHours(-100)).toBe('0 trees working for 0 months');
   });
 
   it("should use singular 'tree' for 1 tree", () => {
@@ -194,7 +196,7 @@ describe("translateToTreeHours", () => {
     expect(result).toMatch(/1 tree working for/);
   });
 
-  it("should scale trees up for very large values", () => {
+  it('should scale trees up for very large values', () => {
     const result = translateToTreeHours(50000);
     // Should have many trees rather than thousands of months
     const match = result.match(/^(\d+)/);
@@ -208,34 +210,34 @@ describe("translateToTreeHours", () => {
 // getConservationStatus
 // ═══════════════════════════════════════════════════════════════
 
-describe("getConservationStatus", () => {
+describe('getConservationStatus', () => {
   it("should return 'Least Concern' for ≤ 1500 kg", () => {
-    expect(getConservationStatus(1000)).toBe("Least Concern");
-    expect(getConservationStatus(1500)).toBe("Least Concern");
+    expect(getConservationStatus(1000)).toBe('Least Concern');
+    expect(getConservationStatus(1500)).toBe('Least Concern');
   });
 
   it("should return 'Vulnerable' for 1501–4000 kg", () => {
-    expect(getConservationStatus(2000)).toBe("Vulnerable");
-    expect(getConservationStatus(4000)).toBe("Vulnerable");
+    expect(getConservationStatus(2000)).toBe('Vulnerable');
+    expect(getConservationStatus(4000)).toBe('Vulnerable');
   });
 
   it("should return 'Endangered' for 4001–8000 kg", () => {
-    expect(getConservationStatus(5000)).toBe("Endangered");
-    expect(getConservationStatus(8000)).toBe("Endangered");
+    expect(getConservationStatus(5000)).toBe('Endangered');
+    expect(getConservationStatus(8000)).toBe('Endangered');
   });
 
   it("should return 'Critically Endangered' for 8001–16000 kg", () => {
-    expect(getConservationStatus(10000)).toBe("Critically Endangered");
-    expect(getConservationStatus(16000)).toBe("Critically Endangered");
+    expect(getConservationStatus(10000)).toBe('Critically Endangered');
+    expect(getConservationStatus(16000)).toBe('Critically Endangered');
   });
 
   it("should return 'Extinct in the Wild' for > 16000 kg", () => {
-    expect(getConservationStatus(20000)).toBe("Extinct in the Wild");
-    expect(getConservationStatus(100000)).toBe("Extinct in the Wild");
+    expect(getConservationStatus(20000)).toBe('Extinct in the Wild');
+    expect(getConservationStatus(100000)).toBe('Extinct in the Wild');
   });
 
   it("should return 'Least Concern' for 0 emissions", () => {
-    expect(getConservationStatus(0)).toBe("Least Concern");
+    expect(getConservationStatus(0)).toBe('Least Concern');
   });
 });
 
@@ -243,8 +245,8 @@ describe("getConservationStatus", () => {
 // Legacy Functions
 // ═══════════════════════════════════════════════════════════════
 
-describe("calculateExtinctionProgress", () => {
-  it("should calculate progress for a declining behavior", () => {
+describe('calculateExtinctionProgress', () => {
+  it('should calculate progress for a declining behavior', () => {
     const data = EXTINCTION_CLOCK_DATA[0];
     if (!data) return;
     const progress = calculateExtinctionProgress(data);
@@ -252,9 +254,9 @@ describe("calculateExtinctionProgress", () => {
     expect(progress).toBeLessThanOrEqual(100);
   });
 
-  it("should return 0 for a behavior at peak adoption", () => {
+  it('should return 0 for a behavior at peak adoption', () => {
     const progress = calculateExtinctionProgress({
-      behavior: "Test",
+      behavior: 'Test',
       estimatedExtinctionYear: 2100,
       currentAdoptionRate: 95,
       peakAdoptionYear: 2020,
@@ -264,9 +266,9 @@ describe("calculateExtinctionProgress", () => {
     expect(progress).toBe(0);
   });
 
-  it("should return 100 for an extinct behavior", () => {
+  it('should return 100 for an extinct behavior', () => {
     const progress = calculateExtinctionProgress({
-      behavior: "Test",
+      behavior: 'Test',
       estimatedExtinctionYear: 2020,
       currentAdoptionRate: 0,
       peakAdoptionYear: 1990,
@@ -277,53 +279,53 @@ describe("calculateExtinctionProgress", () => {
   });
 });
 
-describe("getConservationStatusFromRate", () => {
-  it("should return EXTINCT for 0 adoption", () => {
-    expect(getConservationStatusFromRate(0)).toBe("EXTINCT");
+describe('getConservationStatusFromRate', () => {
+  it('should return EXTINCT for 0 adoption', () => {
+    expect(getConservationStatusFromRate(0)).toBe('EXTINCT');
   });
 
-  it("should return CRITICALLY_ENDANGERED for very low rates", () => {
-    expect(getConservationStatusFromRate(3)).toBe("CRITICALLY_ENDANGERED");
+  it('should return CRITICALLY_ENDANGERED for very low rates', () => {
+    expect(getConservationStatusFromRate(3)).toBe('CRITICALLY_ENDANGERED');
   });
 
-  it("should return ENDANGERED for low rates", () => {
-    expect(getConservationStatusFromRate(10)).toBe("ENDANGERED");
+  it('should return ENDANGERED for low rates', () => {
+    expect(getConservationStatusFromRate(10)).toBe('ENDANGERED');
   });
 
-  it("should return VULNERABLE for moderate-low rates", () => {
-    expect(getConservationStatusFromRate(25)).toBe("VULNERABLE");
+  it('should return VULNERABLE for moderate-low rates', () => {
+    expect(getConservationStatusFromRate(25)).toBe('VULNERABLE');
   });
 
-  it("should return NEAR_THREATENED for moderate rates", () => {
-    expect(getConservationStatusFromRate(40)).toBe("NEAR_THREATENED");
+  it('should return NEAR_THREATENED for moderate rates', () => {
+    expect(getConservationStatusFromRate(40)).toBe('NEAR_THREATENED');
   });
 
-  it("should return LEAST_CONCERN for high rates", () => {
-    expect(getConservationStatusFromRate(75)).toBe("LEAST_CONCERN");
-  });
-});
-
-describe("formatYearsRemaining", () => {
-  it("should format future years correctly", () => {
-    expect(formatYearsRemaining(2050, 2026)).toBe("24 years remaining");
-  });
-
-  it("should handle 1 year remaining", () => {
-    expect(formatYearsRemaining(2027, 2026)).toBe("1 year remaining");
-  });
-
-  it("should handle already extinct", () => {
-    expect(formatYearsRemaining(2020, 2026)).toBe("Already extinct");
-    expect(formatYearsRemaining(2026, 2026)).toBe("Already extinct");
+  it('should return LEAST_CONCERN for high rates', () => {
+    expect(getConservationStatusFromRate(75)).toBe('LEAST_CONCERN');
   });
 });
 
-describe("SAMPLE_SPECIMENS", () => {
-  it("should contain specimen data", () => {
+describe('formatYearsRemaining', () => {
+  it('should format future years correctly', () => {
+    expect(formatYearsRemaining(2050, 2026)).toBe('24 years remaining');
+  });
+
+  it('should handle 1 year remaining', () => {
+    expect(formatYearsRemaining(2027, 2026)).toBe('1 year remaining');
+  });
+
+  it('should handle already extinct', () => {
+    expect(formatYearsRemaining(2020, 2026)).toBe('Already extinct');
+    expect(formatYearsRemaining(2026, 2026)).toBe('Already extinct');
+  });
+});
+
+describe('SAMPLE_SPECIMENS', () => {
+  it('should contain specimen data', () => {
     expect(SAMPLE_SPECIMENS.length).toBeGreaterThan(0);
   });
 
-  it("should have valid specimen structure", () => {
+  it('should have valid specimen structure', () => {
     const specimen = SAMPLE_SPECIMENS[0];
     if (!specimen) return;
     expect(specimen.id).toBeTruthy();
@@ -334,12 +336,12 @@ describe("SAMPLE_SPECIMENS", () => {
   });
 });
 
-describe("EXTINCTION_CLOCK_DATA", () => {
-  it("should contain extinction clock entries", () => {
+describe('EXTINCTION_CLOCK_DATA', () => {
+  it('should contain extinction clock entries', () => {
     expect(EXTINCTION_CLOCK_DATA.length).toBeGreaterThan(0);
   });
 
-  it("should have valid data structure", () => {
+  it('should have valid data structure', () => {
     const entry = EXTINCTION_CLOCK_DATA[0];
     if (!entry) return;
     expect(entry.behavior).toBeTruthy();

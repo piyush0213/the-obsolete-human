@@ -1,3 +1,7 @@
+/**
+ * @file index.ts
+ * @description Implements types/index.ts for The Obsolete Human Museum.
+ */
 // ═══════════════════════════════════════════════════════════════
 // Domain Types: The Obsolete Human Museum
 // ═══════════════════════════════════════════════════════════════
@@ -9,13 +13,13 @@
 // level and carries zero runtime cost.
 
 /** Kilograms of CO₂-equivalent emissions */
-export type EmissionsKg = number & { readonly __brand: "EmissionsKg" };
+export type EmissionsKg = number & { readonly __brand: 'EmissionsKg' };
 
 /** Unique identifier for a specimen record */
-export type SpecimenId = string & { readonly __brand: "SpecimenId" };
+export type SpecimenId = string & { readonly __brand: 'SpecimenId' };
 
 /** Tree-hours: a composite unit representing reforestation effort */
-export type TreeHours = number & { readonly __brand: "TreeHours" };
+export type TreeHours = number & { readonly __brand: 'TreeHours' };
 
 /** Helper to cast a raw number into EmissionsKg at trust boundaries */
 export function toEmissionsKg(value: number): EmissionsKg {
@@ -34,42 +38,26 @@ export function toTreeHours(value: number): TreeHours {
 
 // ─── Onboarding Enums ───────────────────────────────────────
 
-export type Diet =
-  | "herbivore"
-  | "omnivore"
-  | "carnivore"
-  | "opportunistic";
+export type Diet = 'herbivore' | 'omnivore' | 'carnivore' | 'opportunistic';
 
 export type Transport =
-  | "none"
-  | "public"
-  | "private"
-  | "mixed"
-  | "aviation_heavy";
+  | 'none'
+  | 'public'
+  | 'private'
+  | 'mixed'
+  | 'aviation_heavy';
 
-export type EnergySource =
-  | "renewable"
-  | "mixed"
-  | "fossil"
-  | "unknown";
+export type EnergySource = 'renewable' | 'mixed' | 'fossil' | 'unknown';
 
-export type HousingType =
-  | "apartment"
-  | "house"
-  | "shared"
-  | "nomadic";
+export type HousingType = 'apartment' | 'house' | 'shared' | 'nomadic';
 
-export type AcUsage =
-  | "none"
-  | "occasional"
-  | "regular"
-  | "constant";
+export type AcUsage = 'none' | 'occasional' | 'regular' | 'constant';
 
 export type ElectronicsReplacement =
-  | "rarely"
-  | "yearly"
-  | "bi_yearly"
-  | "obsessively";
+  | 'rarely'
+  | 'yearly'
+  | 'bi_yearly'
+  | 'obsessively';
 
 // ─── Onboarding Input ───────────────────────────────────────
 
@@ -89,11 +77,11 @@ export interface HabitsInput {
 // ─── Conservation Status (display-friendly) ─────────────────
 
 export type ConservationStatusLevel =
-  | "Least Concern"
-  | "Vulnerable"
-  | "Endangered"
-  | "Critically Endangered"
-  | "Extinct in the Wild";
+  | 'Least Concern'
+  | 'Vulnerable'
+  | 'Endangered'
+  | 'Critically Endangered'
+  | 'Extinct in the Wild';
 
 // ─── Onboarding Specimen ────────────────────────────────────
 // The specimen created from a visitor's onboarding habits.
@@ -116,7 +104,7 @@ export interface OnboardingSpecimen {
 
 // ─── Field Notes (severity-based) ───────────────────────────
 
-export type FieldNoteSeverity = "observation" | "concern" | "critical";
+export type FieldNoteSeverity = 'observation' | 'concern' | 'critical';
 
 export interface FieldNoteEntry {
   readonly id: string;
@@ -128,12 +116,12 @@ export interface FieldNoteEntry {
 // ─── Taxidermy Item ─────────────────────────────────────────
 
 export type TaxidermyCategory =
-  | "transportation"
-  | "communication"
-  | "commerce"
-  | "labor"
-  | "recreation"
-  | "sustenance";
+  | 'transportation'
+  | 'communication'
+  | 'commerce'
+  | 'labor'
+  | 'recreation'
+  | 'sustenance';
 
 export interface TaxidermyItem {
   readonly id: string;
@@ -144,7 +132,6 @@ export interface TaxidermyItem {
   readonly category: TaxidermyCategory;
 }
 
-
 // ═══════════════════════════════════════════════════════════════
 // Legacy Types — used by existing museum components
 // Kept for backward compatibility with v1 gallery UI
@@ -152,12 +139,12 @@ export interface TaxidermyItem {
 
 /** Conservation status levels for human behavioral specimens */
 export type ConservationStatus =
-  | "EXTINCT"
-  | "CRITICALLY_ENDANGERED"
-  | "ENDANGERED"
-  | "VULNERABLE"
-  | "NEAR_THREATENED"
-  | "LEAST_CONCERN";
+  | 'EXTINCT'
+  | 'CRITICALLY_ENDANGERED'
+  | 'ENDANGERED'
+  | 'VULNERABLE'
+  | 'NEAR_THREATENED'
+  | 'LEAST_CONCERN';
 
 /** A specimen in the museum's collection (gallery display format) */
 export interface Specimen {
@@ -180,16 +167,16 @@ export interface CarbonFootprint {
   readonly annualKg: number;
   readonly equivalentTrees: number;
   readonly category: CarbonCategory;
-  readonly trend: "INCREASING" | "DECREASING" | "STABLE" | "UNKNOWN";
+  readonly trend: 'INCREASING' | 'DECREASING' | 'STABLE' | 'UNKNOWN';
 }
 
 export type CarbonCategory =
-  | "TRANSPORT"
-  | "DIET"
-  | "HOUSING"
-  | "CONSUMPTION"
-  | "DIGITAL"
-  | "RECREATION";
+  | 'TRANSPORT'
+  | 'DIET'
+  | 'HOUSING'
+  | 'CONSUMPTION'
+  | 'DIGITAL'
+  | 'RECREATION';
 
 /** Field note entry from museum curators (gallery format) */
 export interface FieldNote {
@@ -198,7 +185,7 @@ export interface FieldNote {
   readonly author: string;
   readonly date: string;
   readonly content: string;
-  readonly classification: "OBSERVATION" | "HYPOTHESIS" | "CONCLUSION";
+  readonly classification: 'OBSERVATION' | 'HYPOTHESIS' | 'CONCLUSION';
 }
 
 /** Habitat data for the HabitatCam component */
@@ -247,7 +234,7 @@ export interface ApiResponse<T> {
 /** Curation request payload */
 export interface CurationRequest {
   readonly specimenId: string;
-  readonly action: "CLASSIFY" | "ANNOTATE" | "ARCHIVE";
+  readonly action: 'CLASSIFY' | 'ANNOTATE' | 'ARCHIVE';
   readonly notes?: string;
 }
 

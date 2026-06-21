@@ -1,17 +1,21 @@
-import DOMPurify from "dompurify";
+/**
+ * @file sanitizers.ts
+ * @description Implements lib/sanitizers.ts for The Obsolete Human Museum.
+ */
+import DOMPurify from 'dompurify';
 
 /**
  * Sanitize HTML content to prevent XSS attacks.
  * Uses DOMPurify with a strict configuration.
  */
 export function sanitizeHTML(dirty: string): string {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     // Server-side: strip all HTML tags
-    return dirty.replace(/<[^>]*>/g, "");
+    return dirty.replace(/<[^>]*>/g, '');
   }
   return DOMPurify.sanitize(dirty, {
-    ALLOWED_TAGS: ["b", "i", "em", "strong", "br", "p", "span"],
-    ALLOWED_ATTR: ["class"],
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'br', 'p', 'span'],
+    ALLOWED_ATTR: ['class'],
     KEEP_CONTENT: true,
   });
 }
@@ -22,8 +26,8 @@ export function sanitizeHTML(dirty: string): string {
  */
 export function sanitizeText(input: string): string {
   return input
-    .replace(/<[^>]*>/g, "")
-    .replace(/[<>]/g, "")
+    .replace(/<[^>]*>/g, '')
+    .replace(/[<>]/g, '')
     .trim();
 }
 
@@ -35,28 +39,28 @@ export function sanitizeUrl(url: string): string {
   const normalized = trimmed.toLowerCase();
 
   if (
-    normalized.startsWith("javascript:") ||
-    normalized.startsWith("data:") ||
-    normalized.startsWith("vbscript:")
+    normalized.startsWith('javascript:') ||
+    normalized.startsWith('data:') ||
+    normalized.startsWith('vbscript:')
   ) {
-    return "#";
+    return '#';
   }
 
   if (
-    normalized.startsWith("http://") ||
-    normalized.startsWith("https://") ||
-    normalized.startsWith("/") ||
-    normalized.startsWith("#")
+    normalized.startsWith('http://') ||
+    normalized.startsWith('https://') ||
+    normalized.startsWith('/') ||
+    normalized.startsWith('#')
   ) {
     return trimmed;
   }
 
-  return "#";
+  return '#';
 }
 
 /**
  * Sanitize catalog number input to match expected format
  */
 export function sanitizeCatalogNumber(input: string): string {
-  return input.replace(/[^A-Z0-9-]/gi, "").toUpperCase();
+  return input.replace(/[^A-Z0-9-]/gi, '').toUpperCase();
 }

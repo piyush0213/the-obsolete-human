@@ -2,6 +2,17 @@
   "name": "the-obsolete-human",
   "version": "0.1.0",
   "private": true,
+  "description": "A carbon footprint awareness platform that visualizes personal emissions as a museum exhibit from the year 3026",
+  "keywords": [
+    "carbon",
+    "footprint",
+    "climate",
+    "environment",
+    "sustainability",
+    "emissions",
+    "nextjs",
+    "react"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",

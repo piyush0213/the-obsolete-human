@@ -1,10 +1,16 @@
-"use client";
+'use client';
+/**
+ * @file CarbonTranslate.tsx
+ * @description Implements components/museum/CarbonTranslate.tsx for The Obsolete Human Museum.
+ */
 
-import type { Specimen } from "@/types";
-import { useCarbonSpecimen } from "@/hooks/useCarbonSpecimen";
-import { Select } from "@/components/ui/Select";
-import { formatNumber } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import React from 'react';
+
+import type { Specimen } from '@/types';
+import { useCarbonSpecimen } from '@/hooks/useCarbonSpecimen';
+import { Select } from '@/components/ui/Select';
+import { formatNumber } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 interface CarbonTranslateProps {
   specimen: Specimen;
@@ -12,12 +18,15 @@ interface CarbonTranslateProps {
 }
 
 const UNIT_OPTIONS = [
-  { value: "trees", label: "Trees to Absorb CO₂" },
-  { value: "arcticIce", label: "Arctic Ice Melted by CO₂" },
-  { value: "flightsNYtoLondon", label: "NY↔London Flights (Carbon Equivalent)" },
-  { value: "smartphoneCharges", label: "Phone Charges (Carbon Equivalent)" },
-  { value: "beefBurgers", label: "Beef Burgers (Carbon Equivalent)" },
-  { value: "streamingHours", label: "Streaming Hours (Carbon Equivalent)" },
+  { value: 'trees', label: 'Trees to Absorb CO₂' },
+  { value: 'arcticIce', label: 'Arctic Ice Melted by CO₂' },
+  {
+    value: 'flightsNYtoLondon',
+    label: 'NY↔London Flights (Carbon Equivalent)',
+  },
+  { value: 'smartphoneCharges', label: 'Phone Charges (Carbon Equivalent)' },
+  { value: 'beefBurgers', label: 'Beef Burgers (Carbon Equivalent)' },
+  { value: 'streamingHours', label: 'Streaming Hours (Carbon Equivalent)' },
 ] as const;
 
 /**
@@ -33,9 +42,17 @@ const UNIT_OPTIONS = [
  * @description Component CarbonTranslate
  * @returns {JSX.Element}
  */
-export function CarbonTranslate({ specimen, className }: CarbonTranslateProps): JSX.Element | null {
-  const { carbonData, translation, selectedUnit, setSelectedUnit, formattedValue } =
-    useCarbonSpecimen(specimen);
+function CarbonTranslateComponent({
+  specimen,
+  className,
+}: CarbonTranslateProps): JSX.Element | null {
+  const {
+    carbonData,
+    translation,
+    selectedUnit,
+    setSelectedUnit,
+    formattedValue,
+  } = useCarbonSpecimen(specimen);
 
   if (!carbonData || !translation) return null;
 
@@ -43,8 +60,8 @@ export function CarbonTranslate({ specimen, className }: CarbonTranslateProps): 
     <section
       aria-labelledby="carbon-translate-heading"
       className={cn(
-        "p-6 rounded-xl border border-museum-border bg-museum-bg-glass backdrop-blur-md",
-        className,
+        'p-6 rounded-xl border border-museum-border bg-museum-bg-glass backdrop-blur-md',
+        className
       )}
     >
       <header className="mb-4">
@@ -52,11 +69,14 @@ export function CarbonTranslate({ specimen, className }: CarbonTranslateProps): 
           id="carbon-translate-heading"
           className="font-serif text-lg text-museum-text flex items-center gap-2"
         >
-          <span className="text-museum-secondary" aria-hidden="true">⚗</span>
+          <span className="text-museum-secondary" aria-hidden="true">
+            ⚗
+          </span>
           Carbon Translation
         </h3>
         <p className="text-xs text-museum-text-muted mt-1">
-          Annual carbon impact of this behavioral specimen, translated into tangible equivalents.
+          Annual carbon impact of this behavioral specimen, translated into
+          tangible equivalents.
         </p>
       </header>
 
@@ -88,11 +108,8 @@ export function CarbonTranslate({ specimen, className }: CarbonTranslateProps): 
         {/* Translated equivalent */}
         <div className="text-center py-2">
           <dt className="sr-only">Carbon equivalent</dt>
-          <dd
-            className="text-sm text-museum-text font-sans"
-            aria-live="polite"
-          >
-            Equivalent to{" "}
+          <dd className="text-sm text-museum-text font-sans" aria-live="polite">
+            Equivalent to{' '}
             <strong className="text-museum-accent">{formattedValue()}</strong>
           </dd>
         </div>
@@ -103,17 +120,17 @@ export function CarbonTranslate({ specimen, className }: CarbonTranslateProps): 
           <dd>
             <span
               className={cn(
-                "inline-block px-2 py-0.5 rounded-full text-[9px] font-mono uppercase",
-                carbonData.trend === "DECREASING"
-                  ? "bg-museum-secondary/20 text-museum-secondary"
-                  : carbonData.trend === "INCREASING"
-                    ? "bg-museum-danger/20 text-museum-danger"
-                    : "bg-museum-accent/20 text-museum-accent",
+                'inline-block px-2 py-0.5 rounded-full text-[9px] font-mono uppercase',
+                carbonData.trend === 'DECREASING'
+                  ? 'bg-museum-secondary/20 text-museum-secondary'
+                  : carbonData.trend === 'INCREASING'
+                    ? 'bg-museum-danger/20 text-museum-danger'
+                    : 'bg-museum-accent/20 text-museum-accent'
               )}
             >
-              {carbonData.trend === "DECREASING" && "↓ "}
-              {carbonData.trend === "INCREASING" && "↑ "}
-              {carbonData.trend === "STABLE" && "→ "}
+              {carbonData.trend === 'DECREASING' && '↓ '}
+              {carbonData.trend === 'INCREASING' && '↑ '}
+              {carbonData.trend === 'STABLE' && '→ '}
               {carbonData.trend}
             </span>
           </dd>
@@ -122,3 +139,5 @@ export function CarbonTranslate({ specimen, className }: CarbonTranslateProps): 
     </section>
   );
 }
+
+export const CarbonTranslate = React.memo(CarbonTranslateComponent);

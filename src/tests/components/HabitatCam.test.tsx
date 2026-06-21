@@ -1,3 +1,7 @@
+/**
+ * @file HabitatCam.test.tsx
+ * @description Implements tests/components/HabitatCam.test.tsx for The Obsolete Human Museum.
+ */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { HabitatCam } from '@/components/museum/HabitatCam';
@@ -25,9 +29,11 @@ describe('HabitatCam', () => {
 
   it('has proper label and describedby for the upload area', () => {
     render(<HabitatCam habitat={mockHabitat} />);
-    const dropzone = screen.getByRole('button', { name: /Upload a photograph of/i });
+    const dropzone = screen.getByRole('button', {
+      name: /Upload a photograph of/i,
+    });
     expect(dropzone).toHaveAttribute('aria-describedby');
-    
+
     const fileInput = screen.getByLabelText(/Choose image file for/i);
     expect(fileInput).toBeInTheDocument();
     expect(fileInput).toHaveAttribute('type', 'file');
@@ -35,37 +41,43 @@ describe('HabitatCam', () => {
 
   it('allows keyboard operability of upload', () => {
     render(<HabitatCam habitat={mockHabitat} />);
-    const dropzone = screen.getByRole('button', { name: /Upload a photograph of/i });
-    
+    const dropzone = screen.getByRole('button', {
+      name: /Upload a photograph of/i,
+    });
+
     // Mock the click on the hidden file input
     const fileInput = screen.getByLabelText(/Choose image file for/i);
     const clickSpy = vi.spyOn(fileInput, 'click');
-    
+
     dropzone.focus();
     fireEvent.keyDown(dropzone, { key: 'Enter', code: 'Enter' });
-    
+
     expect(clickSpy).toHaveBeenCalled();
   });
 
   it('mocks file upload and displays loading state', async () => {
     render(<HabitatCam habitat={mockHabitat} />);
     const fileInput = screen.getByLabelText(/Choose image file for/i);
-    
+
     const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
-    
+
     // Using DataTransfer to mock files
     Object.defineProperty(fileInput, 'files', {
-      value: [file]
+      value: [file],
     });
-    
+
     fireEvent.change(fileInput);
-    
+
     // It should temporarily show uploading
-    expect(screen.getByRole('status', { name: 'Uploading photograph' })).toBeInTheDocument();
-    
+    expect(
+      screen.getByRole('status', { name: 'Uploading photograph' })
+    ).toBeInTheDocument();
+
     // And eventually the preview
     await waitFor(() => {
-      expect(screen.getByAltText(/Uploaded photograph of the/i)).toBeInTheDocument();
+      expect(
+        screen.getByAltText(/Uploaded photograph of the/i)
+      ).toBeInTheDocument();
     });
   });
 });

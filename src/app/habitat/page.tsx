@@ -1,60 +1,64 @@
-"use client";
+'use client';
+/**
+ * @file page.tsx
+ * @description Implements app/habitat/page.tsx for The Obsolete Human Museum.
+ */
 
-import { useState, useRef, useCallback } from "react";
-import { Button } from "@/components/ui/Button";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { announce } from "@/components/accessibility/ScreenReaderAnnouncer";
-import { cn } from "@/lib/utils";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import React from 'react';
 
-type AnalysisState = "idle" | "uploading" | "analyzing" | "done" | "error";
+import { useState, useRef, useCallback } from 'react';
+import { Button } from '@/components/ui/Button';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { announce } from '@/components/accessibility/ScreenReaderAnnouncer';
+import { cn } from '@/lib/utils';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { MAX_UPLOAD_SIZE_MB } from '@/lib/constants';
+
+type AnalysisState = 'idle' | 'uploading' | 'analyzing' | 'done' | 'error';
 
 /**
  * @description Component HabitatPage
  * @returns {JSX.Element}
  */
-export default function HabitatPage(): JSX.Element {
+function HabitatPageComponent(): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
   const [preview, setPreview] = useState<string | null>(null);
-  const [analysisState, setAnalysisState] = useState<AnalysisState>("idle");
+  const [analysisState, setAnalysisState] = useState<AnalysisState>('idle');
   const [narration, setNarration] = useState<string | null>(null);
   const [fieldNote, setFieldNote] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const handleFile = useCallback(
-    (file: File) => {
-      if (!file.type.startsWith("image/")) {
-        announce("Invalid file type. Please upload a JPEG or PNG image.");
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        announce("File too large. Maximum size is 5 MB.");
-        return;
-      }
+  const handleFile = useCallback((file: File) => {
+    if (!file.type.startsWith('image/')) {
+      announce('Invalid file type. Please upload a JPEG or PNG image.');
+      return;
+    }
+    if (file.size > MAX_UPLOAD_SIZE_MB * 1024 * 1024) {
+      announce('File too large. Maximum size is 5 MB.');
+      return;
+    }
 
-      setAnalysisState("uploading");
-      setNarration(null);
-      setFieldNote(null);
-      setErrorMessage(null);
-      announce("Uploading habitat photograph...");
+    setAnalysisState('uploading');
+    setNarration(null);
+    setFieldNote(null);
+    setErrorMessage(null);
+    announce('Uploading habitat photograph...');
 
-      const reader = new FileReader();
-      reader.onload = (e): void => {
-        setPreview(e.target?.result as string);
-        setAnalysisState("idle");
-        announce("Habitat photograph uploaded. Ready for analysis.");
-      };
-      reader.onerror = (): void => {
-        setAnalysisState("error");
-        setErrorMessage("Upload failed. Please try again.");
-        announce("Upload failed. Please try again.");
-      };
-      reader.readAsDataURL(file);
-    },
-    [],
-  );
+    const reader = new FileReader();
+    reader.onload = (e): void => {
+      setPreview(e.target?.result as string);
+      setAnalysisState('idle');
+      announce('Habitat photograph uploaded. Ready for analysis.');
+    };
+    reader.onerror = (): void => {
+      setAnalysisState('error');
+      setErrorMessage('Upload failed. Please try again.');
+      announce('Upload failed. Please try again.');
+    };
+    reader.readAsDataURL(file);
+  }, []);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -63,7 +67,7 @@ export default function HabitatPage(): JSX.Element {
       const file = e.dataTransfer.files[0];
       if (file) handleFile(file);
     },
-    [handleFile],
+    [handleFile]
   );
 
   const handleFileChange = useCallback(
@@ -71,22 +75,24 @@ export default function HabitatPage(): JSX.Element {
       const file = e.target.files?.[0];
       if (file) handleFile(file);
     },
-    [handleFile],
+    [handleFile]
   );
 
   const analyzeHabitat = useCallback(async () => {
     if (!preview) return;
 
-    setAnalysisState("analyzing");
+    setAnalysisState('analyzing');
     setErrorMessage(null);
-    announce("Analyzing habitat. Dr. Thorne is examining your nesting chamber...");
+    announce(
+      'Analyzing habitat. Dr. Thorne is examining your nesting chamber...'
+    );
 
     try {
-      const response = await fetch("/api/curate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/curate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          promptType: "habitat",
+          promptType: 'habitat',
           userMessage:
             "Analyze this human's living space based on the photograph. Describe what you observe about their nesting chamber, consumer artifacts, and display behaviors.",
         }),
@@ -95,20 +101,20 @@ export default function HabitatPage(): JSX.Element {
       if (!response.ok) {
         const data = await response.json().catch(() => null);
         throw new Error(
-          data?.error ?? "The museum's AI systems are temporarily unavailable.",
+          data?.error ?? "The museum's AI systems are temporarily unavailable."
         );
       }
 
       const data = await response.json();
       setNarration(data.data.text);
-      setAnalysisState("done");
-      announce("Habitat analysis complete. Narration is now available.");
+      setAnalysisState('done');
+      announce('Habitat analysis complete. Narration is now available.');
     } catch (err) {
       const message =
         err instanceof Error
           ? err.message
-          : "Analysis failed. Please try again.";
-      setAnalysisState("error");
+          : 'Analysis failed. Please try again.';
+      setAnalysisState('error');
       setErrorMessage(message);
       announce(`Analysis failed: ${message}`);
     }
@@ -116,28 +122,28 @@ export default function HabitatPage(): JSX.Element {
 
   const generateFieldNote = useCallback(async () => {
     setFieldNote(null);
-    announce("Generating field note...");
+    announce('Generating field note...');
 
     try {
-      const response = await fetch("/api/curate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/curate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          promptType: "field_note",
+          promptType: 'field_note',
           userMessage:
-            "The human was observed in their natural habitat today. They appeared to be organizing their nesting materials while simultaneously consuming a caffeinated beverage.",
+            'The human was observed in their natural habitat today. They appeared to be organizing their nesting materials while simultaneously consuming a caffeinated beverage.',
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to generate field note.");
+        throw new Error('Failed to generate field note.');
       }
 
       const data = await response.json();
       setFieldNote(data.data.text);
-      announce("Field note generated successfully.");
+      announce('Field note generated successfully.');
     } catch {
-      announce("Failed to generate field note. Please try again.");
+      announce('Failed to generate field note. Please try again.');
     }
   }, []);
 
@@ -145,11 +151,11 @@ export default function HabitatPage(): JSX.Element {
     setPreview(null);
     setNarration(null);
     setFieldNote(null);
-    setAnalysisState("idle");
+    setAnalysisState('idle');
     setErrorMessage(null);
-    announce("Photo removed. Upload area restored.");
+    announce('Photo removed. Upload area restored.');
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   }, []);
 
@@ -176,10 +182,10 @@ export default function HabitatPage(): JSX.Element {
           {!preview ? (
             <div
               className={cn(
-                "relative w-full min-h-[240px] rounded-xl overflow-hidden border-2 border-dashed transition-colors cursor-pointer",
+                'relative w-full min-h-[240px] rounded-xl overflow-hidden border-2 border-dashed transition-colors cursor-pointer',
                 isDragging
-                  ? "border-museum-accent bg-museum-accent/10"
-                  : "border-museum-border bg-gradient-to-br from-museum-bg to-museum-bg-elevated",
+                  ? 'border-museum-accent bg-museum-accent/10'
+                  : 'border-museum-border bg-gradient-to-br from-museum-bg to-museum-bg-elevated'
               )}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -189,7 +195,7 @@ export default function HabitatPage(): JSX.Element {
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
+                if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
                   fileInputRef.current?.click();
                 }
@@ -210,12 +216,12 @@ export default function HabitatPage(): JSX.Element {
                 tabIndex={-1}
               />
 
-              {analysisState === "uploading" ? (
+              {analysisState === 'uploading' ? (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div
                     className={cn(
-                      "w-10 h-10 rounded-full border-2 border-museum-accent border-t-transparent",
-                      !prefersReducedMotion && "animate-spin",
+                      'w-10 h-10 rounded-full border-2 border-museum-accent border-t-transparent',
+                      !prefersReducedMotion && 'animate-spin'
                     )}
                     role="status"
                     aria-label="Uploading photograph"
@@ -245,8 +251,8 @@ export default function HabitatPage(): JSX.Element {
                   <div className="text-center">
                     <p className="text-sm text-museum-text font-sans">
                       {isDragging
-                        ? "Drop your habitat photo here"
-                        : "Drag and drop a photo of your living space"}
+                        ? 'Drop your habitat photo here'
+                        : 'Drag and drop a photo of your living space'}
                     </p>
                     <p className="text-xs text-museum-text-muted mt-1">
                       or click to browse files
@@ -296,12 +302,9 @@ export default function HabitatPage(): JSX.Element {
         </section>
 
         {/* ── Action Buttons ── */}
-        {preview && analysisState !== "analyzing" && (
+        {preview && analysisState !== 'analyzing' && (
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              onClick={analyzeHabitat}
-              size="lg"
-            >
+            <Button onClick={analyzeHabitat} size="lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -323,7 +326,7 @@ export default function HabitatPage(): JSX.Element {
         )}
 
         {/* ── Loading State ── */}
-        {analysisState === "analyzing" && (
+        {analysisState === 'analyzing' && (
           <div role="status" aria-label="Analyzing habitat">
             <p className="sr-only">Analyzing habitat, please wait.</p>
             <div className="space-y-4">
@@ -334,7 +337,7 @@ export default function HabitatPage(): JSX.Element {
         )}
 
         {/* ── Error ── */}
-        {analysisState === "error" && errorMessage && (
+        {analysisState === 'error' && errorMessage && (
           <div
             className="p-4 rounded-lg border border-museum-danger/30 bg-museum-danger/10 text-sm text-museum-danger"
             role="alert"
@@ -395,3 +398,5 @@ export default function HabitatPage(): JSX.Element {
     </div>
   );
 }
+
+export default React.memo(HabitatPageComponent);

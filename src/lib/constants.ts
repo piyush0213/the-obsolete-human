@@ -102,3 +102,47 @@ export const MAX_FIELD_NOTE_LENGTH = 2000 as const;
 
 /** Debounce delay for search inputs */
 export const SEARCH_DEBOUNCE_MS = 300 as const;
+
+export const EMISSION_FACTOR_BEEF_KG_CO2 = 27;
+export const MAX_UPLOAD_SIZE_MB = 5;
+export const DEBOUNCE_MS = 300;
+export const SUSTAINABLE_TARGET_KG = 1500;
+
+export const WEEKS_PER_YEAR = 52;
+export const KG_PER_TONNE = 1000;
+export const DAYS_PER_YEAR = 365.25;
+export const HOURS_PER_DAY = 24;
+export const MINUTES_PER_HOUR = 60;
+export const SECONDS_PER_MINUTE = 60;
+export const MS_PER_SECOND = 1000;
+export const MONTHS_PER_YEAR = 12;
+export const HUNDRED_PERCENT = 100;
+
+/** Maps conservation status → visual color classes */
+export const STATUS_COLORS: Record<string, { text: string; bg: string; border: string }> = {
+  "Least Concern": {
+    text: "text-museum-secondary",
+    bg: "bg-museum-secondary/20",
+    border: "border-museum-secondary/30",
+  },
+  "Vulnerable": {
+    text: "text-yellow-400",
+    bg: "bg-yellow-400/20",
+    border: "border-yellow-400/30",
+  },
+  "Endangered": {
+    text: "text-orange-400",
+    bg: "bg-orange-400/20",
+    border: "border-orange-400/30",
+  },
+  "Critically Endangered": {
+    text: "text-red-400",
+    bg: "bg-red-400/20",
+    border: "border-red-400/30",
+  },
+  "Extinct in the Wild": {
+    text: "text-museum-danger",
+    bg: "bg-museum-danger/20",
+    border: "border-museum-danger/30",
+  },
+};

@@ -1,32 +1,36 @@
-import type { Metadata, Viewport } from "next";
-import "@/styles/globals.css";
-import { SkipToContent } from "@/components/accessibility/SkipToContent";
-import { ScreenReaderAnnouncer } from "@/components/accessibility/ScreenReaderAnnouncer";
-import { NAV_LINKS, MUSEUM_NAME, MUSEUM_TAGLINE } from "@/lib/constants";
-import { NavigationLink } from "@/components/museum/NavigationLink";
-import Link from "next/link";
+/**
+ * @file layout.tsx
+ * @description Implements app/layout.tsx for The Obsolete Human Museum.
+ */
+import type { Metadata, Viewport } from 'next';
+import '@/styles/globals.css';
+import { SkipToContent } from '@/components/accessibility/SkipToContent';
+import { ScreenReaderAnnouncer } from '@/components/accessibility/ScreenReaderAnnouncer';
+import { NAV_LINKS, MUSEUM_NAME, MUSEUM_TAGLINE } from '@/lib/constants';
+import { NavigationLink } from '@/components/museum/NavigationLink';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: {
-    default: "The Obsolete Human — Natural History Museum, Year 3026",
-    template: "%s | The Obsolete Human",
+    default: 'The Obsolete Human | Carbon Footprint Awareness',
+    template: '%s | The Obsolete Human',
   },
   description:
-    "Cataloguing the extinct behaviors of Homo sapiens sapiens — from the Age of Combustion to the Great Automation.",
+    'Calculate your carbon footprint and visualize your environmental impact as a museum exhibit from the year 3026.',
   keywords: [
-    "museum",
-    "natural history",
-    "human behavior",
-    "extinction",
-    "future",
-    "anthropocene",
+    'carbon footprint',
+    'climate change',
+    'environmental impact',
+    'museum',
+    'extinction',
+    'sustainability',
   ],
 };
 
 export const viewport: Viewport = {
-  width: "device-width",
+  width: 'device-width',
   initialScale: 1,
-  themeColor: "#1a1814",
+  themeColor: '#1a1814',
 };
 
 /**

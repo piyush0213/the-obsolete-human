@@ -1,12 +1,18 @@
-"use client";
+'use client';
+/**
+ * @file ConservationStatus.tsx
+ * @description Implements components/museum/ConservationStatus.tsx for The Obsolete Human Museum.
+ */
 
-import type { ConservationStatus as ConservationStatusType } from "@/types";
-import { CONSERVATION_STATUS_CONFIG } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import React from 'react';
+
+import type { ConservationStatus as ConservationStatusType } from '@/types';
+import { CONSERVATION_STATUS_CONFIG } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 
 interface ConservationStatusProps {
   status: ConservationStatusType;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   className?: string;
 }
@@ -25,21 +31,21 @@ interface ConservationStatusProps {
  */
 
 const STATUS_ICONS: Record<ConservationStatusType, string> = {
-  EXTINCT: "✕",
-  CRITICALLY_ENDANGERED: "‼",
-  ENDANGERED: "!",
-  VULNERABLE: "▲",
-  NEAR_THREATENED: "◆",
-  LEAST_CONCERN: "●",
+  EXTINCT: '✕',
+  CRITICALLY_ENDANGERED: '‼',
+  ENDANGERED: '!',
+  VULNERABLE: '▲',
+  NEAR_THREATENED: '◆',
+  LEAST_CONCERN: '●',
 };
 
 /**
  * @description Component ConservationStatus
  * @returns {JSX.Element}
  */
-export function ConservationStatus({
+function ConservationStatusComponent({
   status,
-  size = "md",
+  size = 'md',
   showLabel = true,
   className,
 }: ConservationStatusProps): JSX.Element {
@@ -49,25 +55,25 @@ export function ConservationStatus({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full font-mono uppercase tracking-wider border",
+        'inline-flex items-center gap-1.5 rounded-full font-mono uppercase tracking-wider border',
         config.bgColor,
         config.color,
         {
-          "px-2 py-0.5 text-[9px]": size === "sm",
-          "px-3 py-1 text-[10px]": size === "md",
-          "px-4 py-1.5 text-xs": size === "lg",
+          'px-2 py-0.5 text-[9px]': size === 'sm',
+          'px-3 py-1 text-[10px]': size === 'md',
+          'px-4 py-1.5 text-xs': size === 'lg',
         },
-        className,
+        className
       )}
       role="status"
       aria-label={`Conservation status: ${config.label}. ${config.description}`}
     >
       {/* Icon — not decorative, provides a non-colour signal */}
       <span
-        className={cn("font-bold leading-none", {
-          "text-[8px]": size === "sm",
-          "text-[10px]": size === "md",
-          "text-xs": size === "lg",
+        className={cn('font-bold leading-none', {
+          'text-[8px]': size === 'sm',
+          'text-[10px]': size === 'md',
+          'text-xs': size === 'lg',
         })}
         aria-hidden="true"
       >
@@ -77,15 +83,15 @@ export function ConservationStatus({
       {/* Colour dot — purely decorative */}
       <span
         className={cn(
-          "rounded-full",
-          config.color === "text-museum-danger"
-            ? "bg-museum-danger"
-            : "bg-current",
+          'rounded-full',
+          config.color === 'text-museum-danger'
+            ? 'bg-museum-danger'
+            : 'bg-current',
           {
-            "w-1.5 h-1.5": size === "sm",
-            "w-2 h-2": size === "md",
-            "w-2.5 h-2.5": size === "lg",
-          },
+            'w-1.5 h-1.5': size === 'sm',
+            'w-2 h-2': size === 'md',
+            'w-2.5 h-2.5': size === 'lg',
+          }
         )}
         aria-hidden="true"
       />
@@ -99,3 +105,5 @@ export function ConservationStatus({
     </span>
   );
 }
+
+export const ConservationStatus = React.memo(ConservationStatusComponent);

@@ -1,5 +1,9 @@
-import { forwardRef, type SelectHTMLAttributes } from "react";
-import { cn } from "@/lib/utils";
+/**
+ * @file Select.tsx
+ * @description Implements components/ui/Select.tsx for The Obsolete Human Museum.
+ */
+import { forwardRef, type SelectHTMLAttributes } from 'react';
+import { cn } from '@/lib/utils';
 
 export interface SelectOption {
   value: string;
@@ -18,10 +22,10 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
   (
     { className, label, options, error, placeholder, id, helperText, ...props },
-    ref,
+    ref
   ) => {
     const selectId =
-      id ?? `select-${label?.toLowerCase().replace(/\s+/g, "-") ?? "field"}`;
+      id ?? `select-${label?.toLowerCase().replace(/\s+/g, '-') ?? 'field'}`;
     const errorId = error ? `${selectId}-error` : undefined;
     const helperId = helperText ? `${selectId}-helper` : undefined;
 
@@ -38,16 +42,16 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           id={selectId}
-          aria-invalid={error ? "true" : undefined}
+          aria-invalid={error ? 'true' : undefined}
           aria-describedby={error ? errorId : helperText ? helperId : undefined}
           className={cn(
-            "h-10 w-full rounded-lg border bg-museum-bg px-4 py-2 font-sans text-sm text-museum-text transition-colors duration-200 appearance-none cursor-pointer",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-museum-accent focus-visible:ring-offset-1 focus-visible:ring-offset-museum-bg",
-            "disabled:cursor-not-allowed disabled:opacity-50",
+            'h-10 w-full rounded-lg border bg-museum-bg px-4 py-2 font-sans text-sm text-museum-text transition-colors duration-200 appearance-none cursor-pointer',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-museum-accent focus-visible:ring-offset-1 focus-visible:ring-offset-museum-bg',
+            'disabled:cursor-not-allowed disabled:opacity-50',
             error
-              ? "border-museum-danger"
-              : "border-museum-border hover:border-museum-border-hover",
-            className,
+              ? 'border-museum-danger'
+              : 'border-museum-border hover:border-museum-border-hover',
+            className
           )}
           {...props}
         >
@@ -72,15 +76,18 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </p>
         )}
         {!error && helperText && (
-          <p id={helperId} className="text-[10px] sm:text-xs font-sans text-museum-text-muted mt-1">
+          <p
+            id={helperId}
+            className="text-[10px] sm:text-xs font-sans text-museum-text-muted mt-1"
+          >
             {helperText}
           </p>
         )}
       </div>
     );
-  },
+  }
 );
 
-Select.displayName = "Select";
+Select.displayName = 'Select';
 
 export { Select };

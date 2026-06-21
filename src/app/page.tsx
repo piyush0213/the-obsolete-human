@@ -1,10 +1,15 @@
-import Link from "next/link";
+/**
+ * @file page.tsx
+ * @description Implements app/page.tsx for The Obsolete Human Museum.
+ */
+import React from 'react';
+import Link from 'next/link';
 
 /**
  * @description The main entrance page for the museum, introducing the concept.
  * @returns {JSX.Element} The rendered hero section and features.
  */
-export default function EntrancePage(): JSX.Element {
+function EntrancePageComponent(): JSX.Element {
   return (
     <div className="relative">
       {/* ── Hero Section ── */}
@@ -17,11 +22,9 @@ export default function EntrancePage(): JSX.Element {
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-museum-accent/5 rounded-full blur-3xl motion-safe:animate-float" />
           <div
             className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-museum-secondary/5 rounded-full blur-3xl motion-safe:animate-float"
-            style={{ animationDelay: "3s" }}
+            style={{ animationDelay: '3s' }}
           />
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-museum-accent/[0.02] rounded-full blur-3xl"
-          />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-museum-accent/[0.02] rounded-full blur-3xl" />
         </div>
 
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto space-y-8">
@@ -46,18 +49,22 @@ export default function EntrancePage(): JSX.Element {
 
             <p
               className="text-lg sm:text-xl text-museum-text-muted max-w-2xl mx-auto leading-relaxed motion-safe:animate-fade-in font-sans"
-              style={{ animationDelay: "0.3s" }}
+              style={{ animationDelay: '0.3s' }}
             >
               Calculate your environmental impact. Classified by AI.
             </p>
-            <p className="text-md sm:text-lg text-museum-text-muted/80 max-w-xl mx-auto leading-relaxed motion-safe:animate-fade-in font-sans" style={{ animationDelay: "0.4s" }}>
-              This museum calculates your carbon emissions and translates them into a species conservation status.
+            <p
+              className="text-md sm:text-lg text-museum-text-muted/80 max-w-xl mx-auto leading-relaxed motion-safe:animate-fade-in font-sans"
+              style={{ animationDelay: '0.4s' }}
+            >
+              This museum calculates your carbon emissions and translates them
+              into a species conservation status.
             </p>
           </div>
 
           <div
             className="motion-safe:animate-fade-in"
-            style={{ animationDelay: "0.6s" }}
+            style={{ animationDelay: '0.6s' }}
           >
             <Link
               href="/onboarding"
@@ -102,7 +109,7 @@ export default function EntrancePage(): JSX.Element {
             stroke="currentColor"
             strokeWidth="1.5"
             className="text-museum-text-muted/30"
-            style={{ animation: "scroll-indicator 2s ease-in-out infinite" }}
+            style={{ animation: 'scroll-indicator 2s ease-in-out infinite' }}
           >
             <polyline points="6 9 12 15 18 9" />
           </svg>
@@ -124,10 +131,10 @@ export default function EntrancePage(): JSX.Element {
             aria-label="Museum collection statistics"
           >
             {[
-              { value: "4,219", label: "Documented Behaviors", icon: "📋" },
-              { value: "847", label: "Confirmed Extinct", icon: "🦴" },
-              { value: "1,203", label: "Critically Endangered", icon: "⚠" },
-              { value: "156", label: "Active Field Studies", icon: "🔬" },
+              { value: '4,219', label: 'Documented Behaviors', icon: '📋' },
+              { value: '847', label: 'Confirmed Extinct', icon: '🦴' },
+              { value: '1,203', label: 'Critically Endangered', icon: '⚠' },
+              { value: '156', label: 'Active Field Studies', icon: '🔬' },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -189,3 +196,5 @@ export default function EntrancePage(): JSX.Element {
     </div>
   );
 }
+
+export default React.memo(EntrancePageComponent);

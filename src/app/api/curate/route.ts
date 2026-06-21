@@ -1,16 +1,20 @@
-import { NextResponse } from "next/server";
-import { z } from "zod";
-import { logger } from "@/lib/logger";
-import { getSystemPrompt } from "@/lib/prompts";
-import type { PromptType } from "@/lib/prompts";
+/**
+ * @file route.ts
+ * @description Implements app/api/curate/route.ts for The Obsolete Human Museum.
+ */
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { logger } from '@/lib/logger';
+import { getSystemPrompt } from '@/lib/prompts';
+import type { PromptType } from '@/lib/prompts';
 
-export const runtime = "edge";
+export const runtime = 'edge';
 
 // ═══════════════════════════════════════════════════════════════
 // Constants
 // ═══════════════════════════════════════════════════════════════
 
-const GEMINI_MODEL = "gemini-2.0-flash";
+const GEMINI_MODEL = 'gemini-2.0-flash';
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 /** Max length of generated text returned to the client */
@@ -30,10 +34,10 @@ const CLEANUP_INTERVAL_MS = 120_000;
 // ═══════════════════════════════════════════════════════════════
 
 const CORS_HEADERS: Record<string, string> = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Max-Age": "86400",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Max-Age': '86400',
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -41,22 +45,21 @@ const CORS_HEADERS: Record<string, string> = {
 // ═══════════════════════════════════════════════════════════════
 
 const VALID_PROMPT_TYPES: [PromptType, ...PromptType[]] = [
-  "curator",
-  "habitat",
-  "field_note",
+  'curator',
+  'habitat',
+  'field_note',
 ];
 
 const curateRequestSchema = z.object({
   promptType: z.enum(VALID_PROMPT_TYPES, {
     errorMap: () => ({
-      message:
-        "promptType must be one of: curator, habitat, field_note",
+      message: 'promptType must be one of: curator, habitat, field_note',
     }),
   }),
   userMessage: z
     .string()
-    .min(1, "userMessage must not be empty")
-    .max(2000, "userMessage must not exceed 2000 characters")
+    .min(1, 'userMessage must not be empty')
+    .max(2000, 'userMessage must not exceed 2000 characters')
     .transform((s) => s.trim()),
 });
 
@@ -130,10 +133,10 @@ function checkRateLimit(ip: string): boolean {
  */
 function sanitizeOutput(raw: string): string {
   return raw
-    .replace(/<[^>]*>/g, "")       // Strip HTML tags
-    .replace(/&#?\w+;/g, "")       // Strip HTML entities
-    .replace(/on\w+\s*=/gi, "")    // Strip inline event handlers
-    .replace(/javascript:/gi, "")  // Strip JS protocol
+    .replace(/<[^>]*>/g, '') // Strip HTML tags
+    .replace(/&#?\w+;/g, '') // Strip HTML entities
+    .replace(/on\w+\s*=/gi, '') // Strip inline event handlers
+    .replace(/javascript:/gi, '') // Strip JS protocol
     .slice(0, MAX_OUTPUT_LENGTH)
     .trim();
 }
@@ -155,16 +158,16 @@ interface GeminiResponse {
 
 async function callGemini(
   systemPrompt: string,
-  userMessage: string,
+  userMessage: string
 ): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error("Gemini API key is not configured");
+    throw new Error('Gemini API key is not configured');
   }
 
   const response = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       system_instruction: {
         parts: [{ text: systemPrompt }],
@@ -182,21 +185,18 @@ async function callGemini(
   });
 
   if (!response.ok) {
-    throw new Error(
-      `Gemini API returned status ${response.status}`,
-    );
+    throw new Error(`Gemini API returned status ${response.status}`);
   }
 
   const data = (await response.json()) as GeminiResponse;
 
   if (data.error) {
-    throw new Error("Gemini generation failed");
+    throw new Error('Gemini generation failed');
   }
 
-  const text =
-    data.candidates?.[0]?.content?.parts?.[0]?.text;
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) {
-    throw new Error("Gemini returned no text");
+    throw new Error('Gemini returned no text');
   }
 
   return text;
@@ -220,17 +220,17 @@ export async function OPTIONS(): Promise<NextResponse> {
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     // ── Rate limiting ───────────────────────────────────────
-    const forwarded = request.headers.get("x-forwarded-for");
-    const ip = forwarded?.split(",")[0]?.trim() ?? "unknown";
+    const forwarded = request.headers.get('x-forwarded-for');
+    const ip = forwarded?.split(',')[0]?.trim() ?? 'unknown';
 
     if (!checkRateLimit(ip)) {
       return NextResponse.json(
         {
           success: false,
-          error: "Too many requests. Please wait a moment before trying again.",
+          error: 'Too many requests. Please wait a moment before trying again.',
           timestamp: new Date().toISOString(),
         },
-        { status: 429, headers: CORS_HEADERS },
+        { status: 429, headers: CORS_HEADERS }
       );
     }
 
@@ -242,10 +242,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid JSON in request body.",
+          error: 'Invalid JSON in request body.',
           timestamp: new Date().toISOString(),
         },
-        { status: 400, headers: CORS_HEADERS },
+        { status: 400, headers: CORS_HEADERS }
       );
     }
 
@@ -254,12 +254,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json(
         {
           success: false,
-          error: parsed.error.errors
-            .map((e) => e.message)
-            .join("; "),
+          error: parsed.error.errors.map((e) => e.message).join('; '),
           timestamp: new Date().toISOString(),
         },
-        { status: 400, headers: CORS_HEADERS },
+        { status: 400, headers: CORS_HEADERS }
       );
     }
 
@@ -278,12 +276,12 @@ export async function POST(request: Request): Promise<NextResponse> {
         data: { text: sanitized, promptType },
         timestamp: new Date().toISOString(),
       },
-      { status: 200, headers: CORS_HEADERS },
+      { status: 200, headers: CORS_HEADERS }
     );
   } catch (err) {
     // NEVER leak internal details or the API key
     // In production, this would use a structured logger (e.g. Sentry)
-    logger.error("[curate] Internal error:", err);
+    logger.error('[curate] Internal error:', err);
 
     return NextResponse.json(
       {
@@ -292,7 +290,7 @@ export async function POST(request: Request): Promise<NextResponse> {
           "The museum's AI systems are temporarily unavailable. Please try again later.",
         timestamp: new Date().toISOString(),
       },
-      { status: 500, headers: CORS_HEADERS },
+      { status: 500, headers: CORS_HEADERS }
     );
   }
 }

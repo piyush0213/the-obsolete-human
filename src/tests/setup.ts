@@ -1,3 +1,7 @@
+/**
+ * @file setup.ts
+ * @description Implements tests/setup.ts for The Obsolete Human Museum.
+ */
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
@@ -25,7 +29,7 @@ Object.defineProperty(window, 'localStorage', {
 // Mock matchMedia for prefers-reduced-motion
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,

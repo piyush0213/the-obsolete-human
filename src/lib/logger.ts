@@ -1,4 +1,8 @@
 /**
+ * @file logger.ts
+ * @description Implements lib/logger.ts for The Obsolete Human Museum.
+ */
+/**
  * @description Centralized logger utility for the application to replace direct console calls.
  * This ensures clean production logs and prepares for Sentry/Datadog integration.
  */
@@ -10,12 +14,12 @@ export const logger = {
    * @returns void
    */
   info: (message: string, data?: unknown): void => {
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
-      console.info(message, data || "");
+      console.info(message, data || '');
     }
   },
-  
+
   /**
    * @description Logs warnings
    * @param message - The warning message
@@ -23,9 +27,9 @@ export const logger = {
    * @returns void
    */
   warn: (message: string, data?: unknown): void => {
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
-      console.warn(message, data || "");
+      console.warn(message, data || '');
     }
   },
 
@@ -37,9 +41,9 @@ export const logger = {
    */
   error: (message: string, error?: unknown): void => {
     // In a real app, send to Sentry here
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
-      console.error(message, error || "");
+      console.error(message, error || '');
     }
   },
 };

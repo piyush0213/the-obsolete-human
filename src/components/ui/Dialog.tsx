@@ -1,8 +1,12 @@
-"use client";
+'use client';
+/**
+ * @file Dialog.tsx
+ * @description Implements components/ui/Dialog.tsx for The Obsolete Human Museum.
+ */
 
-import { useEffect, useRef, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
-import { FocusTrap } from "@/components/accessibility/FocusTrap";
+import { useEffect, useRef, type ReactNode } from 'react';
+import { cn } from '@/lib/utils';
+import { FocusTrap } from '@/components/accessibility/FocusTrap';
 
 interface DialogProps {
   open: boolean;
@@ -29,12 +33,12 @@ export function Dialog({
 
   useEffect((): void | (() => void) => {
     if (open) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [open]);
 
@@ -59,10 +63,10 @@ export function Dialog({
           role="dialog"
           aria-modal="true"
           aria-labelledby="dialog-title"
-          aria-describedby={description ? "dialog-description" : undefined}
+          aria-describedby={description ? 'dialog-description' : undefined}
           className={cn(
-            "relative z-10 w-full max-w-lg mx-4 rounded-xl border border-museum-border bg-museum-bg-elevated shadow-museum-lg p-6 motion-safe:animate-slide-up",
-            className,
+            'relative z-10 w-full max-w-lg mx-4 rounded-xl border border-museum-border bg-museum-bg-elevated shadow-museum-lg p-6 motion-safe:animate-slide-up',
+            className
           )}
         >
           <header className="mb-4">

@@ -1,6 +1,10 @@
-"use client";
+'use client';
+/**
+ * @file ScreenReaderAnnouncer.tsx
+ * @description Implements components/accessibility/ScreenReaderAnnouncer.tsx for The Obsolete Human Museum.
+ */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 /**
  * ScreenReaderAnnouncer — ARIA live region for dynamic announcements.
@@ -17,30 +21,27 @@ import { useEffect, useRef, useState } from "react";
  * @returns {JSX.Element}
  */
 export function ScreenReaderAnnouncer(): JSX.Element {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect((): void | (() => void) => {
     function handleAnnounce(event: CustomEvent<string>): void {
       // Clear → re-set forces screen readers to re-read even
       // if the new message is identical to the previous one.
-      setMessage("");
+      setMessage('');
       requestAnimationFrame(() => {
         setMessage(event.detail);
       });
 
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(() => setMessage(""), 8000);
+      timeoutRef.current = setTimeout(() => setMessage(''), 8000);
     }
 
-    window.addEventListener(
-      "museum:announce",
-      handleAnnounce as EventListener,
-    );
+    window.addEventListener('museum:announce', handleAnnounce as EventListener);
     return () => {
       window.removeEventListener(
-        "museum:announce",
-        handleAnnounce as EventListener,
+        'museum:announce',
+        handleAnnounce as EventListener
       );
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
@@ -67,9 +68,9 @@ export function ScreenReaderAnnouncer(): JSX.Element {
  *   announce("Upload complete. Image preview now available.");
  */
 export function announce(message: string): void {
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     window.dispatchEvent(
-      new CustomEvent("museum:announce", { detail: message }),
+      new CustomEvent('museum:announce', { detail: message })
     );
   }
 }

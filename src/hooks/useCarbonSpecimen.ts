@@ -1,10 +1,25 @@
-"use client";
+'use client';
+/**
+ * @file useCarbonSpecimen.ts
+ * @description Implements hooks/useCarbonSpecimen.ts for The Obsolete Human Museum.
+ */
 
-import { useState, useCallback, useEffect } from "react";
-import type { Specimen, CarbonFootprint, HabitsInput, OnboardingSpecimen, ConservationStatusLevel, EmissionsKg } from "@/types";
-import { toEmissionsKg, toSpecimenId } from "@/types";
-import { kgCO2ToTrees } from "@/lib/utils";
-import { calculateCarbonEmissions, calculateLifestyleExpiry, getConservationStatus } from "@/lib/extinction";
+import { useState, useCallback, useEffect } from 'react';
+import type {
+  Specimen,
+  CarbonFootprint,
+  HabitsInput,
+  OnboardingSpecimen,
+  ConservationStatusLevel,
+  EmissionsKg,
+} from '@/types';
+import { toEmissionsKg, toSpecimenId } from '@/types';
+import { kgCO2ToTrees } from '@/lib/utils';
+import {
+  calculateCarbonFootprint,
+  calculateLifestyleExpiry,
+  getConservationStatus,
+} from '@/lib/carbon-calculator';
 
 // ─── Carbon Translation ────────────────────────────────────
 
@@ -30,10 +45,10 @@ function translateCarbon(kgCO2: number): CarbonTranslation {
 
 // ─── localStorage helpers (SSR-safe) ────────────────────────
 
-const STORAGE_KEY = "the-obsolete-human:specimen";
+const STORAGE_KEY = 'the-obsolete-human:specimen';
 
 function loadSpecimen(): OnboardingSpecimen | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === 'undefined') return null;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
@@ -52,7 +67,7 @@ function loadSpecimen(): OnboardingSpecimen | null {
 }
 
 function saveSpecimen(specimen: OnboardingSpecimen): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(specimen));
   } catch {
@@ -61,7 +76,7 @@ function saveSpecimen(specimen: OnboardingSpecimen): void {
 }
 
 function removeSpecimen(): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   try {
     window.localStorage.removeItem(STORAGE_KEY);
   } catch {
@@ -72,18 +87,18 @@ function removeSpecimen(): void {
 // ─── Species Name Generator ────────────────────────────────
 
 function generateSpeciesName(habits: HabitsInput): string {
-  const dietMap: Record<HabitsInput["diet"], string> = {
-    herbivore: "herbivorus",
-    omnivore: "omnivorus",
-    carnivore: "carnivorus",
-    opportunistic: "opportunistus",
+  const dietMap: Record<HabitsInput['diet'], string> = {
+    herbivore: 'herbivorus',
+    omnivore: 'omnivorus',
+    carnivore: 'carnivorus',
+    opportunistic: 'opportunistus',
   };
-  const transportMap: Record<HabitsInput["transport"], string> = {
-    none: "sedentarius",
-    public: "transitensis",
-    private: "combustionis",
-    mixed: "versatilus",
-    aviation_heavy: "volatilis",
+  const transportMap: Record<HabitsInput['transport'], string> = {
+    none: 'sedentarius',
+    public: 'transitensis',
+    private: 'combustionis',
+    mixed: 'versatilus',
+    aviation_heavy: 'volatilis',
   };
   return `Homo ${dietMap[habits.diet]} ${transportMap[habits.transport]}`;
 }
@@ -95,7 +110,12 @@ function generateSpeciesName(habits: HabitsInput): string {
  * @description Custom hook useOnboardingSpecimen
  * @returns {any}
  */
-export function useOnboardingSpecimen(): { specimen: OnboardingSpecimen | null; isLoading: boolean; createSpecimen: (habits: HabitsInput) => OnboardingSpecimen; clearSpecimen: () => void } {
+export function useOnboardingSpecimen(): {
+  specimen: OnboardingSpecimen | null;
+  isLoading: boolean;
+  createSpecimen: (habits: HabitsInput) => OnboardingSpecimen;
+  clearSpecimen: () => void;
+} {
   const [specimen, setSpecimen] = useState<OnboardingSpecimen | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -106,7 +126,7 @@ export function useOnboardingSpecimen(): { specimen: OnboardingSpecimen | null; 
   }, []);
 
   const createSpecimen = useCallback((habits: HabitsInput) => {
-    const emissions = calculateCarbonEmissions(habits);
+    const emissions = calculateCarbonFootprint(habits);
     const expiry = calculateLifestyleExpiry(emissions);
     const status: ConservationStatusLevel = getConservationStatus(emissions);
     const speciesName = generateSpeciesName(habits);
@@ -152,32 +172,41 @@ export function useOnboardingSpecimen(): { specimen: OnboardingSpecimen | null; 
  * @description Custom hook useCarbonSpecimen
  * @returns {any}
  */
-export function useCarbonSpecimen(specimen: Specimen | null): { carbonData: CarbonFootprint | null; translation: CarbonTranslation | null; selectedUnit: keyof CarbonTranslation; setSelectedUnit: React.Dispatch<React.SetStateAction<keyof CarbonTranslation>>; formattedValue: () => string } {
-  const [selectedUnit, setSelectedUnit] = useState<keyof CarbonTranslation>("trees");
+export function useCarbonSpecimen(specimen: Specimen | null): {
+  carbonData: CarbonFootprint | null;
+  translation: CarbonTranslation | null;
+  selectedUnit: keyof CarbonTranslation;
+  setSelectedUnit: React.Dispatch<
+    React.SetStateAction<keyof CarbonTranslation>
+  >;
+  formattedValue: () => string;
+} {
+  const [selectedUnit, setSelectedUnit] =
+    useState<keyof CarbonTranslation>('trees');
 
   const carbonData: CarbonFootprint | null = specimen?.carbonFootprint ?? null;
 
   const translation = carbonData ? translateCarbon(carbonData.annualKg) : null;
 
   const formattedValue = useCallback((): string => {
-    if (!translation) return "No data available";
+    if (!translation) return 'No data available';
 
     const value = translation[selectedUnit];
     switch (selectedUnit) {
-      case "trees":
+      case 'trees':
         return `requiring ${value.toLocaleString()} trees to absorb the CO₂ for 1 year`;
-      case "arcticIce":
+      case 'arcticIce':
         return `melting ${value.toLocaleString()} m² of Arctic ice annually from CO₂ emissions`;
-      case "flightsNYtoLondon":
+      case 'flightsNYtoLondon':
         return `${value.toLocaleString()} round-trip flights from New York to London (Carbon Equivalent)`;
-      case "smartphoneCharges":
+      case 'smartphoneCharges':
         return `${value.toLocaleString()} full smartphone charges (Carbon Equivalent)`;
-      case "beefBurgers":
+      case 'beefBurgers':
         return `${value.toLocaleString()} beef burgers produced (Carbon Equivalent)`;
-      case "streamingHours":
+      case 'streamingHours':
         return `${value.toLocaleString()} hours of video streaming (Carbon Equivalent)`;
       default:
-        return "Unknown unit";
+        return 'Unknown unit';
     }
   }, [translation, selectedUnit]);
 
