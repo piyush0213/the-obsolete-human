@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Obsolete Human
 
-## Getting Started
+A carbon footprint awareness platform disguised as a natural history museum from 3026. The museum catalogs the extinct behaviors of Homo sapiens sapiens — from the Age of Combustion to the Great Automation.
 
-First, run the development server:
+Curated by AI. Classified by you.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Styling:** Tailwind CSS + Vanilla CSS (Custom Design System)
+- **AI Integration:** Google Gemini via Edge API Route
+- **Testing:** Vitest, React Testing Library, Playwright
+- **Validation:** Zod
+- **Icons/UI:** Lucide React, Radix primitives (via bespoke implementations)
+
+## Setup Instructions
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Environment Variables:**
+   Create a `.env.local` file and add your Gemini API Key:
+   ```env
+   GEMINI_API_KEY=your_key_here
+   ```
+
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+4. **Run tests:**
+   ```bash
+   npm test
+   npm run test:e2e
+   ```
+
+5. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+## Architecture
+
+```text
++-------------------+       +-----------------------+       +-------------------+
+|                   |       |                       |       |                   |
+|  User Interface   +------>+  Next.js App Router   +------>+  Gemini AI Edge   |
+|  (Client Comps)   |       |  (Server/Edge Routes) |       |  (Curator API)    |
+|                   |       |                       |       |                   |
++--------+----------+       +-----------+-----------+       +-------------------+
+         |                              |
+         | LocalStorage Persistence     | Zod Validation & Security
+         v                              v
++-------------------+       +-----------------------+
+|                   |       |                       |
+|  State Management |       | Rate Limiting & San.  |
+|  (Custom Hooks)   |       | (In-Memory / Crypto)  |
+|                   |       |                       |
++-------------------+       +-----------------------+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Security & Reliability
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Content Security Policy (CSP):** Implemented to prevent XSS.
+- **Sanitization:** All AI output is sanitized before rendering.
+- **Rate Limiting:** Edge-level rate limiting prevents API abuse and controls Gemini billing.
+- **Validation:** Strict schema validation via Zod on all API endpoints.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Accessibility Statement
 
-## Learn More
+The Obsolete Human is committed to digital inclusion and is built to **WCAG 2.1 AAA** compliance standards:
+- **Keyboard Navigation:** Fully navigable via keyboard with visible focus states and `FocusTrap` on modals.
+- **Screen Reader Optimized:** Semantic HTML5 landmarks, `aria-live` regions for dynamic content, and visually hidden descriptive text.
+- **Motion Sensitivities:** Strict adherence to `prefers-reduced-motion` media queries, automatically disabling ambient animations, transitions, and smooth scrolling.
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT License. See [LICENSE](LICENSE) for details.

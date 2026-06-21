@@ -1,0 +1,210 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════
+   CSS Custom Properties — Museum Design Tokens
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --museum-bg: #1a1814;
+  --museum-bg-elevated: #242019;
+  --museum-bg-glass: rgba(36, 32, 25, 0.7);
+  --museum-text: #e8e6e1;
+  --museum-text-muted: #a8a49c;
+  --museum-accent: #c9a227;
+  --museum-accent-hover: #d4b03a;
+  --museum-secondary: #8b9d83;
+  --museum-danger: #c45b4a;
+  --museum-border: rgba(201, 162, 39, 0.15);
+  --museum-border-hover: rgba(201, 162, 39, 0.3);
+  --museum-focus: #c9a227;
+  --museum-grain-opacity: 0.03;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--museum-bg);
+    color: var(--museum-text);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background-color: rgba(201, 162, 39, 0.3);
+    color: #1a1814;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--museum-focus);
+    outline-offset: 2px;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--museum-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(201, 162, 39, 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(201, 162, 39, 0.5);
+  }
+}
+
+@layer components {
+  /* ── Grain texture overlay ── */
+  .museum-grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: var(--museum-grain-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    animation: grain-shift 8s steps(10) infinite;
+  }
+
+  /* ── Museum divider ── */
+  .museum-divider {
+    @apply flex items-center gap-4 my-8;
+  }
+
+  .museum-divider::before,
+  .museum-divider::after {
+    @apply flex-1 h-px bg-museum-border;
+    content: '';
+  }
+
+  /* ── Glass panel ── */
+  .glass-panel {
+    @apply rounded-xl border border-museum-border bg-museum-bg-glass backdrop-blur-md shadow-museum;
+  }
+
+  /* ── Museum plaque (for AI narrations) ── */
+  .museum-plaque {
+    @apply relative px-8 py-6 rounded-xl;
+    @apply border border-museum-accent/20 bg-gradient-to-b from-museum-bg-elevated to-museum-bg;
+    @apply font-serif text-museum-text-muted italic leading-relaxed;
+    box-shadow:
+      inset 0 1px 0 rgba(201, 162, 39, 0.08),
+      0 0 30px rgba(201, 162, 39, 0.06);
+  }
+
+  .museum-plaque::before,
+  .museum-plaque::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: rgba(201, 162, 39, 0.3);
+  }
+
+  .museum-plaque::before {
+    top: 8px;
+    left: 8px;
+    border-top: 2px solid;
+    border-left: 2px solid;
+    border-top-left-radius: 6px;
+  }
+
+  .museum-plaque::after {
+    bottom: 8px;
+    right: 8px;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+    border-bottom-right-radius: 6px;
+  }
+
+  /* ── Plaque glow animation ── */
+  .plaque-glow {
+    animation: plaque-pulse 3s ease-in-out infinite alternate;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Keyframe Animations
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes grain-shift {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -15%); }
+  40% { transform: translate(-5%, 15%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 10%); }
+  80% { transform: translate(3%, -15%); }
+  90% { transform: translate(-10%, 10%); }
+}
+
+@keyframes plaque-pulse {
+  0% {
+    box-shadow:
+      inset 0 1px 0 rgba(201, 162, 39, 0.08),
+      0 0 20px rgba(201, 162, 39, 0.04);
+  }
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(201, 162, 39, 0.12),
+      0 0 40px rgba(201, 162, 39, 0.10);
+  }
+}
+
+@keyframes scroll-indicator {
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50% { opacity: 0.4; transform: translateY(8px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Reduced Motion — disable ALL animations
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .museum-grain {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .plaque-glow {
+    animation: none !important;
+  }
+}
